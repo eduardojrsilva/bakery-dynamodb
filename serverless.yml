@@ -1,102 +1,21 @@
-service: lambda-nota-fiscal
+service: bakery-dynamo
 frameworkVersion: '3'
 
 provider:
   name: aws
   runtime: nodejs16.x
-  environment:
-    SQS_QUEUE_URL: { Ref: SQSQueue }
-    SNS_TOPIC_ARN: { Ref: EmailConfirmationTopic }
-    S3_BUCKET_NAME: { Ref: InvoiceBucket }
   iamRoleStatements:
     - Effect: Allow
       Action:
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
-      Resource: "arn:aws:dynamodb:us-east-1:*:table/Invoice"
-
-    - Effect: Allow
-      Action:
-        - sqs:*
-      Resource:
-        Fn::GetAtt: [ SQSQueue, Arn ]
-
-    - Effect: Allow
-      Action:
-        - s3:GetObject
-        - s3:PutObject  
-        - s3:PutObjectAcl
-        - s3:ListBuckets
-        - s3:ListObjects
-      Resource: "arn:aws:s3:::ejrs-invoice-bucket/*"
-
-    - Effect: Allow
-      Action:
-        - sns:Subscribe
-        - sns:Publish
-      Resource:
-        Ref: EmailConfirmationTopic
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-1:*:table/*"
 
 resources:
   Resources:
-    InvoiceTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: Invoice
-        AttributeDefinitions:
-          - AttributeName: id
-            AttributeType: S
-        KeySchema:
-          - AttributeName: id
-            KeyType: HASH
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-        StreamSpecification:
-          StreamViewType: NEW_AND_OLD_IMAGES
-
-    DeadLetterQueue:
-      Type: "AWS::SQS::Queue"
-      Properties:
-        QueueName: dead-letter-queue.fifo
-        FifoQueue: true
-
-    SQSQueue:
-      Type: "AWS::SQS::Queue"
-      Properties:
-        QueueName: sqs-queue.fifo
-        FifoQueue: true
-        DelaySeconds: 300
-        RedrivePolicy:
-          deadLetterTargetArn:
-            Fn::GetAtt: [ DeadLetterQueue, Arn ]
-          maxReceiveCount: 3
-
-    InvoiceBucket:
-      Type: "AWS::S3::Bucket"
-      Properties:
-        BucketName: ejrs-invoice-bucket
-
-    EmailConfirmationTopic:
-      Type: "AWS::SNS::Topic"
-      Properties:
-        TopicName: email-confirmation-topic
+    ${file(serverless/resources/tables.yml)}
 
 functions:
-  invoice-save:
-    handler: src/handlers/index.invoiceSave
-    events:
-      - httpApi:
-          path: /
-          method: post
-          
-  sqs-trigger:
-    handler: src/handlers/index.sqsTrigger
-    events:
-      - sqs:
-          arn:
-            Fn::GetAtt:
-              - SQSQueue
-              - Arn
-          batchSize: 1
+  ${file(serverless/functions/lambdas.yml)}
