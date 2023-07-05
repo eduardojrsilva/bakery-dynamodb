@@ -71,3 +71,40 @@ suppliers-delete:
     - httpApi:
         path: /suppliers/{id}
         method: delete
+
+# EQUIPMENT
+
+equipment-create:
+  handler: src/handlers/index.equipmentCreate
+  events:
+    - httpApi:
+        path: /equipment
+        method: post
+
+equipment-findById:
+  handler: src/handlers/index.equipmentFindById
+  events:
+    - httpApi:
+        path: /equipment/{id}
+        method: get
+
+equipment-findAll:
+  handler: src/handlers/index.equipmentFindAll
+  events:
+    - httpApi:
+        path: /equipment
+        method: get
+
+equipment-update:
+  handler: src/handlers/index.equipmentUpdate
+  events:
+    - httpApi:
+        path: /equipment
+        method: put
+
+equipment-delete:
+  handler: src/handlers/index.equipmentDelete
+  events:
+    - httpApi:
+        path: /equipment/{id}
+        method: delete
