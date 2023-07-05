@@ -28,8 +28,6 @@ class Handler {
     try {
       const { id } = event.pathParameters;
 
-      console.log(event)
-
       const unit = await this.database.delete(id);
 
       return this.handlerSuccess(unit);
