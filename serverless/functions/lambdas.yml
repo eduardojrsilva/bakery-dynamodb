@@ -108,3 +108,40 @@ equipment-delete:
     - httpApi:
         path: /equipment/{id}
         method: delete
+
+# PRODUCTS
+
+products-create:
+  handler: src/handlers/index.productsCreate
+  events:
+    - httpApi:
+        path: /products
+        method: post
+
+products-findById:
+  handler: src/handlers/index.productsFindById
+  events:
+    - httpApi:
+        path: /products/{id}
+        method: get
+
+products-findAll:
+  handler: src/handlers/index.productsFindAll
+  events:
+    - httpApi:
+        path: /products
+        method: get
+
+products-update:
+  handler: src/handlers/index.productsUpdate
+  events:
+    - httpApi:
+        path: /products
+        method: put
+
+products-delete:
+  handler: src/handlers/index.productsDelete
+  events:
+    - httpApi:
+        path: /products/{id}
+        method: delete

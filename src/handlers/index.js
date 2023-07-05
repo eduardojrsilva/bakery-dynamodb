@@ -16,4 +16,10 @@ module.exports = {
   equipmentFindAll: require('./equipment/findAll.js'),
   equipmentUpdate: require('./equipment/update.js'),
   equipmentDelete: require('./equipment/delete.js'),
+
+  productsCreate: require('./products/create.js'),
+  productsFindById: require('./products/findById.js'),
+  productsFindAll: require('./products/findAll.js'),
+  productsUpdate: require('./products/update.js'),
+  productsDelete: require('./products/delete.js'),
 }
