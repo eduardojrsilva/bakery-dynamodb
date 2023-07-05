@@ -1,1 +1,73 @@
-${file(serverless/functions/units.yml)}
+# UNITS
+
+units-create:
+  handler: src/handlers/index.unitsCreate
+  events:
+    - httpApi:
+        path: /units
+        method: post
+
+units-findById:
+  handler: src/handlers/index.unitsFindById
+  events:
+    - httpApi:
+        path: /units/{id}
+        method: get
+
+units-findAll:
+  handler: src/handlers/index.unitsFindAll
+  events:
+    - httpApi:
+        path: /units
+        method: get
+
+units-update:
+  handler: src/handlers/index.unitsUpdate
+  events:
+    - httpApi:
+        path: /units
+        method: put
+
+units-delete:
+  handler: src/handlers/index.unitsDelete
+  events:
+    - httpApi:
+        path: /units/{id}
+        method: delete
+
+# SUPPLIERS
+
+suppliers-create:
+  handler: src/handlers/index.suppliersCreate
+  events:
+    - httpApi:
+        path: /suppliers
+        method: post
+
+suppliers-findById:
+  handler: src/handlers/index.suppliersFindById
+  events:
+    - httpApi:
+        path: /suppliers/{id}
+        method: get
+
+suppliers-findAll:
+  handler: src/handlers/index.suppliersFindAll
+  events:
+    - httpApi:
+        path: /suppliers
+        method: get
+
+suppliers-update:
+  handler: src/handlers/index.suppliersUpdate
+  events:
+    - httpApi:
+        path: /suppliers
+        method: put
+
+suppliers-delete:
+  handler: src/handlers/index.suppliersDelete
+  events:
+    - httpApi:
+        path: /suppliers/{id}
+        method: delete
