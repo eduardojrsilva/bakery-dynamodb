@@ -256,3 +256,40 @@ customers-delete:
     - httpApi:
         path: /customers/{id}
         method: delete
+
+# CUSTOMERS
+
+sales-create:
+  handler: src/handlers/index.salesCreate
+  events:
+    - httpApi:
+        path: /sales
+        method: post
+
+sales-findById:
+  handler: src/handlers/index.salesFindById
+  events:
+    - httpApi:
+        path: /sales/{id}
+        method: get
+
+sales-findAll:
+  handler: src/handlers/index.salesFindAll
+  events:
+    - httpApi:
+        path: /sales
+        method: get
+
+sales-update:
+  handler: src/handlers/index.salesUpdate
+  events:
+    - httpApi:
+        path: /sales
+        method: put
+
+sales-delete:
+  handler: src/handlers/index.salesDelete
+  events:
+    - httpApi:
+        path: /sales/{id}
+        method: delete

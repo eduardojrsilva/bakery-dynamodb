@@ -40,4 +40,10 @@ module.exports = {
   customersFindAll: require('./customers/findAll.js'),
   customersUpdate: require('./customers/update.js'),
   customersDelete: require('./customers/delete.js'),
+
+  salesCreate: require('./sales/create.js'),
+  salesFindById: require('./sales/findById.js'),
+  salesFindAll: require('./sales/findAll.js'),
+  salesUpdate: require('./sales/update.js'),
+  salesDelete: require('./sales/delete.js'),
 }
