@@ -296,19 +296,19 @@ sales-delete:
 
 # UNIT SUPPLIER
 
-# unitSupplier-create:
-#   handler: src/handlers/index.unitSupplierCreate
-#   events:
-#     - httpApi:
-#         path: /unit-supplier
-#         method: post
+unitSupplier-create:
+  handler: src/handlers/index.unitSupplierCreate
+  events:
+    - httpApi:
+        path: /unit-supplier
+        method: post
 
-# unitSupplier-findAll:
-#   handler: src/handlers/index.unitSupplierFindAll
-#   events:
-#     - httpApi:
-#         path: /unit-supplier
-#         method: get
+unitSupplier-findAll:
+  handler: src/handlers/index.unitSupplierFindAll
+  events:
+    - httpApi:
+        path: /unit-supplier
+        method: get
 
 # SUPPLIER EQUIPMENT
 

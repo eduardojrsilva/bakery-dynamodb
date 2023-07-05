@@ -49,11 +49,11 @@ module.exports = {
 
   // JOIN TABLES
 
-  // unitSupplierCreate: require('./unitSupplier/create.js'),
-  // // unitSupplierFindById: require('./unitSupplier/findById.js'),
-  // unitSupplierFindAll: require('./unitSupplier/findAll.js'),
-  // // unitSupplierUpdate: require('./unitSupplier/update.js'),
-  // // unitSupplierDelete: require('./unitSupplier/delete.js'),
+  unitSupplierCreate: require('./unitSupplier/create.js'),
+  // unitSupplierFindById: require('./unitSupplier/findById.js'),
+  unitSupplierFindAll: require('./unitSupplier/findAll.js'),
+  // unitSupplierUpdate: require('./unitSupplier/update.js'),
+  // unitSupplierDelete: require('./unitSupplier/delete.js'),
 
   // supplierEquipmentCreate: require('./supplierEquipment/create.js'),
   // // supplierEquipmentFindById: require('./supplierEquipment/findById.js'),
