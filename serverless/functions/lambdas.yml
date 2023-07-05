@@ -182,3 +182,40 @@ employees-delete:
     - httpApi:
         path: /employees/{id}
         method: delete
+
+# POSITIONS
+
+positions-create:
+  handler: src/handlers/index.positionsCreate
+  events:
+    - httpApi:
+        path: /positions
+        method: post
+
+positions-findById:
+  handler: src/handlers/index.positionsFindById
+  events:
+    - httpApi:
+        path: /positions/{id}
+        method: get
+
+positions-findAll:
+  handler: src/handlers/index.positionsFindAll
+  events:
+    - httpApi:
+        path: /positions
+        method: get
+
+positions-update:
+  handler: src/handlers/index.positionsUpdate
+  events:
+    - httpApi:
+        path: /positions
+        method: put
+
+positions-delete:
+  handler: src/handlers/index.positionsDelete
+  events:
+    - httpApi:
+        path: /positions/{id}
+        method: delete

@@ -28,4 +28,10 @@ module.exports = {
   employeesFindAll: require('./employees/findAll.js'),
   employeesUpdate: require('./employees/update.js'),
   employeesDelete: require('./employees/delete.js'),
+
+  positionsCreate: require('./positions/create.js'),
+  positionsFindById: require('./positions/findById.js'),
+  positionsFindAll: require('./positions/findAll.js'),
+  positionsUpdate: require('./positions/update.js'),
+  positionsDelete: require('./positions/delete.js'),
 }
