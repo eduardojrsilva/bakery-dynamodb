@@ -293,3 +293,115 @@ sales-delete:
     - httpApi:
         path: /sales/{id}
         method: delete
+
+# UNIT SUPPLIER
+
+# unitSupplier-create:
+#   handler: src/handlers/index.unitSupplierCreate
+#   events:
+#     - httpApi:
+#         path: /unit-supplier
+#         method: post
+
+# unitSupplier-findAll:
+#   handler: src/handlers/index.unitSupplierFindAll
+#   events:
+#     - httpApi:
+#         path: /unit-supplier
+#         method: get
+
+# SUPPLIER EQUIPMENT
+
+# supplierEquipment-create:
+#   handler: src/handlers/index.supplierEquipmentCreate
+#   events:
+#     - httpApi:
+#         path: /supplier-equipment
+#         method: post
+
+# supplierEquipment-findAll:
+#   handler: src/handlers/index.supplierEquipmentFindAll
+#   events:
+#     - httpApi:
+#         path: /supplier-equipment
+#         method: get
+
+# UNIT EQUIPMENT
+
+# unitEquipment-create:
+#   handler: src/handlers/index.unitEquipmentCreate
+#   events:
+#     - httpApi:
+#         path: /unit-equipment
+#         method: post
+
+# unitEquipment-findAll:
+#   handler: src/handlers/index.unitEquipmentFindAll
+#   events:
+#     - httpApi:
+#         path: /unit-equipment
+#         method: get
+
+# SUPPLIER PRODUCT
+
+# supplierProduct-create:
+#   handler: src/handlers/index.supplierProductCreate
+#   events:
+#     - httpApi:
+#         path: /supplier-product
+#         method: post
+
+# supplierProduct-findAll:
+#   handler: src/handlers/index.supplierProductFindAll
+#   events:
+#     - httpApi:
+#         path: /supplier-product
+#         method: get
+
+# UNIT PRODUCT
+
+# unitProduct-create:
+#   handler: src/handlers/index.unitProductCreate
+#   events:
+#     - httpApi:
+#         path: /unit-product
+#         method: post
+
+# unitProduct-findAll:
+#   handler: src/handlers/index.unitProductFindAll
+#   events:
+#     - httpApi:
+#         path: /unit-product
+#         method: get
+
+# EMPLOYEE POSITION
+
+# employeePosition-create:
+#   handler: src/handlers/index.employeePositionCreate
+#   events:
+#     - httpApi:
+#         path: /employee-position
+#         method: post
+
+# employeePosition-findAll:
+#   handler: src/handlers/index.employeePositionFindAll
+#   events:
+#     - httpApi:
+#         path: /employee-position
+#         method: get
+
+# PRODUCT SALE
+
+# productSale-create:
+#   handler: src/handlers/index.productSaleCreate
+#   events:
+#     - httpApi:
+#         path: /product-sale
+#         method: post
+
+# productSale-findAll:
+#   handler: src/handlers/index.productSaleFindAll
+#   events:
+#     - httpApi:
+#         path: /product-sale
+#         method: get

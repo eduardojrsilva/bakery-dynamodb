@@ -125,3 +125,117 @@ CustomersTable:
       WriteCapacityUnits: 1
     StreamSpecification:
       StreamViewType: NEW_AND_OLD_IMAGES
+
+# JOIN TABLES
+
+UnitSupplierTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: UnitSupplier
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+    StreamSpecification:
+      StreamViewType: NEW_AND_OLD_IMAGES
+
+SupplierEquipmentTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: SupplierEquipment
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+    StreamSpecification:
+      StreamViewType: NEW_AND_OLD_IMAGES
+
+UnitEquipmentTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: UnitEquipment
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+    StreamSpecification:
+      StreamViewType: NEW_AND_OLD_IMAGES
+
+SupplierProductTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: SupplierProduct
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+    StreamSpecification:
+      StreamViewType: NEW_AND_OLD_IMAGES
+
+UnitProductTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: UnitProduct
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+    StreamSpecification:
+      StreamViewType: NEW_AND_OLD_IMAGES
+
+EmployeePositionTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: EmployeePosition
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+    StreamSpecification:
+      StreamViewType: NEW_AND_OLD_IMAGES
+
+ProductSaleTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: ProductSale
+    AttributeDefinitions:
+      - AttributeName: id
+        AttributeType: S
+    KeySchema:
+      - AttributeName: id
+        KeyType: HASH
+    ProvisionedThroughput:
+      ReadCapacityUnits: 1
+      WriteCapacityUnits: 1
+    StreamSpecification:
+      StreamViewType: NEW_AND_OLD_IMAGES
