@@ -145,3 +145,40 @@ products-delete:
     - httpApi:
         path: /products/{id}
         method: delete
+
+# EMPLOYEES
+
+employees-create:
+  handler: src/handlers/index.employeesCreate
+  events:
+    - httpApi:
+        path: /employees
+        method: post
+
+employees-findById:
+  handler: src/handlers/index.employeesFindById
+  events:
+    - httpApi:
+        path: /employees/{id}
+        method: get
+
+employees-findAll:
+  handler: src/handlers/index.employeesFindAll
+  events:
+    - httpApi:
+        path: /employees
+        method: get
+
+employees-update:
+  handler: src/handlers/index.employeesUpdate
+  events:
+    - httpApi:
+        path: /employees
+        method: put
+
+employees-delete:
+  handler: src/handlers/index.employeesDelete
+  events:
+    - httpApi:
+        path: /employees/{id}
+        method: delete

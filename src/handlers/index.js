@@ -22,4 +22,10 @@ module.exports = {
   productsFindAll: require('./products/findAll.js'),
   productsUpdate: require('./products/update.js'),
   productsDelete: require('./products/delete.js'),
+
+  employeesCreate: require('./employees/create.js'),
+  employeesFindById: require('./employees/findById.js'),
+  employeesFindAll: require('./employees/findAll.js'),
+  employeesUpdate: require('./employees/update.js'),
+  employeesDelete: require('./employees/delete.js'),
 }
