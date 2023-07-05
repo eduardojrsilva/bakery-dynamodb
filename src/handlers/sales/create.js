@@ -1,6 +1,7 @@
 const Joi = require('joi');
 
 const DatabaseProvider = require('../../providers/database');
+const { verifyIfExistsInTable } = require('../../providers/database/utils');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 
@@ -26,11 +27,11 @@ class Handler {
     return response;
   }
 
-  handlerError(data) {
+  handlerError(error) {
     const response = {
-      statusCode: data.statusCode || 500,
+      statusCode: error.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: "Couldn't create item!"})
+      body: JSON.stringify({error: error.message || "Couldn't create item!"})
     }
 
     return response;
@@ -39,6 +40,14 @@ class Handler {
   async main(event) {
     try {
       const data = event.body;
+
+      const sellerExists = await verifyIfExistsInTable('Employees', data.sellerId);
+
+      if (!sellerExists) return this.handlerError({ statusCode: 400, message: 'Seller not found' });
+      
+      const customerExists = await verifyIfExistsInTable('Customers', data.customerId);
+      
+      if (!customerExists) return this.handlerError({ statusCode: 400, message: 'Customer not found' });
 
       const sale = await this.database.create(data);
 

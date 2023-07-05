@@ -1,6 +1,8 @@
 const AWS = require('aws-sdk');
 const { v4 } = require('uuid');
 
+const { verifyIfExistsInList } = require('./utils');
+
 class DatabaseProvider {
   constructor(TableName) {
     this.dynamoDB = new AWS.DynamoDB.DocumentClient({ params: { TableName } });
@@ -12,7 +14,6 @@ class DatabaseProvider {
         id: v4(),
         ...data,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
       }
     }
     
@@ -30,6 +31,8 @@ class DatabaseProvider {
   
     const { Item } = await this.dynamoDB.get(params).promise();
 
+    if (!Item) throw new Error('Item not found');
+
     return Item;
   }
 
@@ -45,6 +48,12 @@ class DatabaseProvider {
     const keysToUpdate = Object.keys(item);
 
     if (!keysToUpdate.length) throw new Error('You need to update at least one field');
+
+    const allItems = await this.findAll();
+
+    const itemExists = verifyIfExistsInList(allItems, id);
+
+    if (!itemExists) throw new Error('Item not found');
 
     const UpdateExpression = `SET ${keysToUpdate.map((key) => `#${key} = :new${key}`).join(', ')}`;
 
@@ -76,6 +85,12 @@ class DatabaseProvider {
   }
 
   async delete(id) {
+    const allItems = await this.findAll();
+
+    const itemExists = verifyIfExistsInList(allItems, id);
+
+    if (!itemExists) throw new Error('Item not found');
+
     const params = {
       Key: {
         id
