@@ -34,14 +34,7 @@ class DatabaseProvider {
   }
 
   async findAll() {
-    const params = {
-      KeyConditionExpression: 'id <> :invalidId',
-      ExpressionAttributeValues: {
-        ':invalidId': 'invalid'
-      }
-    }
-  
-    const { Items } = await this.dynamoDB.query(params).promise();
+    const { Items } = await this.dynamoDB.scan().promise();
 
     return Items;
   }
