@@ -219,3 +219,40 @@ positions-delete:
     - httpApi:
         path: /positions/{id}
         method: delete
+
+# CUSTOMERS
+
+customers-create:
+  handler: src/handlers/index.customersCreate
+  events:
+    - httpApi:
+        path: /customers
+        method: post
+
+customers-findById:
+  handler: src/handlers/index.customersFindById
+  events:
+    - httpApi:
+        path: /customers/{id}
+        method: get
+
+customers-findAll:
+  handler: src/handlers/index.customersFindAll
+  events:
+    - httpApi:
+        path: /customers
+        method: get
+
+customers-update:
+  handler: src/handlers/index.customersUpdate
+  events:
+    - httpApi:
+        path: /customers
+        method: put
+
+customers-delete:
+  handler: src/handlers/index.customersDelete
+  events:
+    - httpApi:
+        path: /customers/{id}
+        method: delete
