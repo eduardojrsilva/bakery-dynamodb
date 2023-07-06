@@ -392,16 +392,16 @@ employeePosition-findAll:
 
 # PRODUCT SALE
 
-# productSale-create:
-#   handler: src/handlers/index.productSaleCreate
-#   events:
-#     - httpApi:
-#         path: /product-sale
-#         method: post
+productSale-create:
+  handler: src/handlers/index.productSaleCreate
+  events:
+    - httpApi:
+        path: /product-sale
+        method: post
 
-# productSale-findAll:
-#   handler: src/handlers/index.productSaleFindAll
-#   events:
-#     - httpApi:
-#         path: /product-sale
-#         method: get
+productSale-findAll:
+  handler: src/handlers/index.productSaleFindAll
+  events:
+    - httpApi:
+        path: /product-sale
+        method: get

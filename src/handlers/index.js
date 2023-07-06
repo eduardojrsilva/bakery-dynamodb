@@ -85,9 +85,9 @@ module.exports = {
   // employeePositionUpdate: require('./employeePosition/update.js'),
   // employeePositionDelete: require('./employeePosition/delete.js'),
 
-  // productSaleCreate: require('./productSale/create.js'),
-  // // productSaleFindById: require('./productSale/findById.js'),
-  // productSaleFindAll: require('./productSale/findAll.js'),
-  // // productSaleUpdate: require('./productSale/update.js'),
-  // // productSaleDelete: require('./productSale/delete.js'),
+  productSaleCreate: require('./productSale/create.js'),
+  // productSaleFindById: require('./productSale/findById.js'),
+  productSaleFindAll: require('./productSale/findAll.js'),
+  // productSaleUpdate: require('./productSale/update.js'),
+  // productSaleDelete: require('./productSale/delete.js'),
 }
