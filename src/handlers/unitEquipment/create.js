@@ -41,7 +41,7 @@ class Handler {
     try {
       const data = event.body;
       
-      const unitExists = await verifyIfExistsInTable('Unit', data.unitId);
+      const unitExists = await verifyIfExistsInTable('Units', data.unitId);
       
       if (!unitExists) return this.handlerError({ statusCode: 400, message: 'Unit not found' });
 
