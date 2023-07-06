@@ -12,7 +12,6 @@ class Handler {
 
   static validator() {
     return Joi.object({
-      // products (ProductSale[])
       sellerId: Joi.string().required(),
       customerId: Joi.string().required(),
     });
