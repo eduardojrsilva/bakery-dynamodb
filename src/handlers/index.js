@@ -79,11 +79,11 @@ module.exports = {
   // unitProductUpdate: require('./unitProduct/update.js'),
   // unitProductDelete: require('./unitProduct/delete.js'),
 
-  // employeePositionCreate: require('./employeePosition/create.js'),
-  // // employeePositionFindById: require('./employeePosition/findById.js'),
-  // employeePositionFindAll: require('./employeePosition/findAll.js'),
-  // // employeePositionUpdate: require('./employeePosition/update.js'),
-  // // employeePositionDelete: require('./employeePosition/delete.js'),
+  employeePositionCreate: require('./employeePosition/create.js'),
+  // employeePositionFindById: require('./employeePosition/findById.js'),
+  employeePositionFindAll: require('./employeePosition/findAll.js'),
+  // employeePositionUpdate: require('./employeePosition/update.js'),
+  // employeePositionDelete: require('./employeePosition/delete.js'),
 
   // productSaleCreate: require('./productSale/create.js'),
   // // productSaleFindById: require('./productSale/findById.js'),

@@ -376,19 +376,19 @@ unitProduct-findAll:
 
 # EMPLOYEE POSITION
 
-# employeePosition-create:
-#   handler: src/handlers/index.employeePositionCreate
-#   events:
-#     - httpApi:
-#         path: /employee-position
-#         method: post
+employeePosition-create:
+  handler: src/handlers/index.employeePositionCreate
+  events:
+    - httpApi:
+        path: /employee-position
+        method: post
 
-# employeePosition-findAll:
-#   handler: src/handlers/index.employeePositionFindAll
-#   events:
-#     - httpApi:
-#         path: /employee-position
-#         method: get
+employeePosition-findAll:
+  handler: src/handlers/index.employeePositionFindAll
+  events:
+    - httpApi:
+        path: /employee-position
+        method: get
 
 # PRODUCT SALE
 
