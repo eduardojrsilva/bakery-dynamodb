@@ -11,7 +11,6 @@ async function verifyIfExistsInTable(TableName, id) {
 }
 
 function verifyIfExistsInList(items, id) {
-
   const item = items.find((item) => item.id === id);
 
   return !!item;
