@@ -360,19 +360,19 @@ supplierProduct-findAll:
 
 # UNIT PRODUCT
 
-# unitProduct-create:
-#   handler: src/handlers/index.unitProductCreate
-#   events:
-#     - httpApi:
-#         path: /unit-product
-#         method: post
+unitProduct-create:
+  handler: src/handlers/index.unitProductCreate
+  events:
+    - httpApi:
+        path: /unit-product
+        method: post
 
-# unitProduct-findAll:
-#   handler: src/handlers/index.unitProductFindAll
-#   events:
-#     - httpApi:
-#         path: /unit-product
-#         method: get
+unitProduct-findAll:
+  handler: src/handlers/index.unitProductFindAll
+  events:
+    - httpApi:
+        path: /unit-product
+        method: get
 
 # EMPLOYEE POSITION
 
