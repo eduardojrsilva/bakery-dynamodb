@@ -61,11 +61,11 @@ module.exports = {
   // supplierEquipmentUpdate: require('./supplierEquipment/update.js'),
   // supplierEquipmentDelete: require('./supplierEquipment/delete.js'),
 
-  // unitEquipmentCreate: require('./unitEquipment/create.js'),
-  // // unitEquipmentFindById: require('./unitEquipment/findById.js'),
-  // unitEquipmentFindAll: require('./unitEquipment/findAll.js'),
-  // // unitEquipmentUpdate: require('./unitEquipment/update.js'),
-  // // unitEquipmentDelete: require('./unitEquipment/delete.js'),
+  unitEquipmentCreate: require('./unitEquipment/create.js'),
+  // unitEquipmentFindById: require('./unitEquipment/findById.js'),
+  unitEquipmentFindAll: require('./unitEquipment/findAll.js'),
+  // unitEquipmentUpdate: require('./unitEquipment/update.js'),
+  // unitEquipmentDelete: require('./unitEquipment/delete.js'),
 
   // supplierProductCreate: require('./supplierProduct/create.js'),
   // // supplierProductFindById: require('./supplierProduct/findById.js'),
