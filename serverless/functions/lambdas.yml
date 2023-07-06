@@ -344,19 +344,19 @@ unitEquipment-findAll:
 
 # SUPPLIER PRODUCT
 
-# supplierProduct-create:
-#   handler: src/handlers/index.supplierProductCreate
-#   events:
-#     - httpApi:
-#         path: /supplier-product
-#         method: post
+supplierProduct-create:
+  handler: src/handlers/index.supplierProductCreate
+  events:
+    - httpApi:
+        path: /supplier-product
+        method: post
 
-# supplierProduct-findAll:
-#   handler: src/handlers/index.supplierProductFindAll
-#   events:
-#     - httpApi:
-#         path: /supplier-product
-#         method: get
+supplierProduct-findAll:
+  handler: src/handlers/index.supplierProductFindAll
+  events:
+    - httpApi:
+        path: /supplier-product
+        method: get
 
 # UNIT PRODUCT
 
