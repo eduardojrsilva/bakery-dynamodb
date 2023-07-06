@@ -312,19 +312,19 @@ unitSupplier-findAll:
 
 # SUPPLIER EQUIPMENT
 
-# supplierEquipment-create:
-#   handler: src/handlers/index.supplierEquipmentCreate
-#   events:
-#     - httpApi:
-#         path: /supplier-equipment
-#         method: post
+supplierEquipment-create:
+  handler: src/handlers/index.supplierEquipmentCreate
+  events:
+    - httpApi:
+        path: /supplier-equipment
+        method: post
 
-# supplierEquipment-findAll:
-#   handler: src/handlers/index.supplierEquipmentFindAll
-#   events:
-#     - httpApi:
-#         path: /supplier-equipment
-#         method: get
+supplierEquipment-findAll:
+  handler: src/handlers/index.supplierEquipmentFindAll
+  events:
+    - httpApi:
+        path: /supplier-equipment
+        method: get
 
 # UNIT EQUIPMENT
 
