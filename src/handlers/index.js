@@ -90,4 +90,6 @@ module.exports = {
   productSaleFindAll: require('./productSale/findAll.js'),
   // productSaleUpdate: require('./productSale/update.js'),
   // productSaleDelete: require('./productSale/delete.js'),
+
+  hireEmployee: require('./bakery/hireEmployee.js'),
 }

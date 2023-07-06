@@ -405,3 +405,12 @@ productSale-findAll:
     - httpApi:
         path: /product-sale
         method: get
+
+# HIRE EMPLOYEE
+
+hireEmployee:
+  handler: src/handlers/index.hireEmployee
+  events:
+    - httpApi:
+        path: /hire-employee
+        method: post
