@@ -12,6 +12,7 @@ class Handler {
   static validator() {
     return Joi.object({
       name: Joi.string().required(),
+      unitsId: Joi.string(),
     });
   }
 

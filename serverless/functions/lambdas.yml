@@ -406,7 +406,33 @@ productSale-findAll:
         path: /product-sale
         method: get
 
-# BAKERY
+# HIRE EMPLOYEE
+
+hireEmployee:
+  handler: src/handlers/index.hireEmployee
+  events:
+    - httpApi:
+        path: /hire-employee
+        method: post
+
+# GET TOP SELLING PRODUCTS
+
+topSellingProducts:
+  handler: src/handlers/index.topSellingProducts
+  events:
+    - httpApi:
+        path: /top-selling-products/{unitId}
+        method: get
+
+# FINISH SALE
+
+finishSale:
+  handler: src/handlers/index.finishSale
+  events:
+    - httpApi:
+        path: /finish-sale
+
+# BUY FROM SUPPLIER
 
 buyFromSupplier:
   handler: src/handlers/index.buyFromSupplier

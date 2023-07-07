@@ -69,8 +69,16 @@ module.exports = {
 
   productSaleCreate: require('./productSale/create.js'),
   productSaleFindAll: require('./productSale/findAll.js'),
+  // productSaleUpdate: require('./productSale/update.js'),
+  // productSaleDelete: require('./productSale/delete.js'),
 
   // BAKERY
+
+  hireEmployee: require('./bakery/hireEmployee.js'),
+
+  topSellingProducts: require('./bakery/topSellingProducts.js'),
+
+  finishSale: require('./bakery/finishSale.js'),
 
   buyFromSupplier: require('./bakery/buyFromSupplier.js'),
 }
