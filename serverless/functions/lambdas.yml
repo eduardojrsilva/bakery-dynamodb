@@ -405,3 +405,12 @@ productSale-findAll:
     - httpApi:
         path: /product-sale
         method: get
+
+# BAKERY
+
+buyFromSupplier:
+  handler: src/handlers/index.buyFromSupplier
+  events:
+    - httpApi:
+        path: /buy-from-supplier
+        method: post
