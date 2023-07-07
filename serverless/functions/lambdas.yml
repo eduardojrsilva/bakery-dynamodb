@@ -423,3 +423,12 @@ topSellingProducts:
     - httpApi:
         path: /top-selling-products/{unitId}
         method: get
+
+# FINISH SALE
+
+finishSale:
+  handler: src/handlers/index.finishSale
+  events:
+    - httpApi:
+        path: /finish-sale
+        method: post
