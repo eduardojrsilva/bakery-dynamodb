@@ -5,7 +5,7 @@ async function verifyIfExistsInTable(TableName, id) {
 
   const { Items: allItems } = await dynamoDB.scan().promise();
 
-  const item = allItems.find((item) => item.id === id);
+  const item = allItems.find((item) => item.id === id && item.active);
 
   return !!item;
 }
@@ -16,4 +16,10 @@ function verifyIfExistsInList(items, id) {
   return !!item;
 }
 
-module.exports = { verifyIfExistsInTable, verifyIfExistsInList };
+function removeActiveProperty(item) {
+  const { active, ...props } = item;
+
+  return { ...props };
+}
+
+module.exports = { verifyIfExistsInTable, verifyIfExistsInList, removeActiveProperty };
