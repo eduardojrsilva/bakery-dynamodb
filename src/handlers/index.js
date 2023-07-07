@@ -69,8 +69,6 @@ module.exports = {
 
   productSaleCreate: require('./productSale/create.js'),
   productSaleFindAll: require('./productSale/findAll.js'),
-  // productSaleUpdate: require('./productSale/update.js'),
-  // productSaleDelete: require('./productSale/delete.js'),
 
   // BAKERY
 
