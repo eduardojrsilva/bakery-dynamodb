@@ -431,6 +431,7 @@ finishSale:
   events:
     - httpApi:
         path: /finish-sale
+        method: post
 
 # BUY FROM SUPPLIER
 
