@@ -1,7 +1,7 @@
 const AWS = require('aws-sdk');
 const { v4 } = require('uuid');
 
-const { verifyIfExistsInList } = require('./utils');
+const { verifyIfExistsInList, removeActiveProperty } = require('./utils');
 
 class DatabaseProvider {
   constructor(TableName) {
@@ -14,12 +14,15 @@ class DatabaseProvider {
         id: v4(),
         ...data,
         createdAt: new Date().toISOString(),
+        active: true,
       }
     }
     
     await this.dynamoDB.put(params).promise();
+
+    const item = removeActiveProperty(params.Item);
   
-    return params.Item;
+    return item;
   }
 
   async findById(id) {
@@ -31,15 +34,19 @@ class DatabaseProvider {
   
     const { Item } = await this.dynamoDB.get(params).promise();
 
-    if (!Item) throw new Error('Item not found');
+    if (!Item || !Item.active) throw new Error('Item not found');
 
-    return Item;
+    const item = removeActiveProperty(Item);
+
+    return item;
   }
 
   async findAll() {
     const { Items } = await this.dynamoDB.scan().promise();
 
-    return Items;
+    const activeItems = Items.filter(({ active }) => active).map((item) => removeActiveProperty(item));
+
+    return activeItems;
   }
 
   async update(data) {
@@ -55,33 +62,33 @@ class DatabaseProvider {
 
     if (!itemExists) throw new Error('Item not found');
 
-    const UpdateExpression = `SET ${keysToUpdate.map((key) => `#${key} = :new${key}`).join(', ')}`;
-
-    const ConditionExpression = keysToUpdate.map((key) => `#${key} <> :new${key}`).join(', ');
+    const UpdateExpression = `SET ${keysToUpdate.map((key) => `#${key} = :new${key}`).join(', ')}, #updatedAt = :now`;
 
     const ExpressionAttributeNames = keysToUpdate.reduce((acc, key) => ({
       ...acc,
       [`#${key}`]: key,
-    }), {});
+    }), { ['#updatedAt']: 'updatedAt' });
 
     const ExpressionAttributeValues = keysToUpdate.reduce((acc, key) => ({
       ...acc,
       [`:new${key}`]: item[key],
-    }), {});
+    }), { [':now']: new Date().toISOString() });
 
     const params = {
       Key: {
         id
       },
       UpdateExpression,
-      ConditionExpression,
       ExpressionAttributeNames,
-      ExpressionAttributeValues
+      ExpressionAttributeValues,
+      ReturnValues: 'ALL_NEW',
     }
   
-    await this.dynamoDB.update(params).promise();
+    const { Attributes } = await this.dynamoDB.update(params).promise();
 
-    return data;
+    const updated = removeActiveProperty(Attributes);
+
+    return updated;
   }
 
   async delete(id) {
@@ -94,12 +101,22 @@ class DatabaseProvider {
     const params = {
       Key: {
         id
-      }
+      },
+      UpdateExpression: 'SET #active = :disabled',
+      ExpressionAttributeNames: {
+        '#active': 'active'
+      },
+      ExpressionAttributeValues: {
+        ':disabled': false
+      },
+      ReturnValues: 'ALL_NEW',
     }
   
-    await this.dynamoDB.delete(params).promise();
+    const { Attributes } = await this.dynamoDB.update(params).promise();
 
-    return { removedItem: id };
+    const removed = removeActiveProperty(Attributes);
+
+    return removed;
   }
 }
 
