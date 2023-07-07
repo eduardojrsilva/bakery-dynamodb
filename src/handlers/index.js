@@ -92,4 +92,6 @@ module.exports = {
   // productSaleDelete: require('./productSale/delete.js'),
 
   hireEmployee: require('./bakery/hireEmployee.js'),
+
+  topSellingProducts: require('./bakery/topSellingProducts.js'),
 }

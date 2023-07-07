@@ -414,3 +414,12 @@ hireEmployee:
     - httpApi:
         path: /hire-employee
         method: post
+
+# GET TOP SELLING PRODUCTS
+
+topSellingProducts:
+  handler: src/handlers/index.topSellingProducts
+  events:
+    - httpApi:
+        path: /top-selling-products/{unitId}
+        method: get
