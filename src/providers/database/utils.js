@@ -47,7 +47,7 @@ async function getRelations({ joinTable, itemId, itemSide = 'left' }) {
     };
   });
 
-  return removeActiveProperty(transformed);
+  return transformed;
 }
 
 module.exports = { verifyIfExistsInTable, verifyIfExistsInList, removeActiveProperty, getRelations };

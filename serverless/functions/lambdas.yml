@@ -431,4 +431,12 @@ finishSale:
   events:
     - httpApi:
         path: /finish-sale
+
+# BUY FROM SUPPLIER
+
+buyFromSupplier:
+  handler: src/handlers/index.buyFromSupplier
+  events:
+    - httpApi:
+        path: /buy-from-supplier
         method: post
