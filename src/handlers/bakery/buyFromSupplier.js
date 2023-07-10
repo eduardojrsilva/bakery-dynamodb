@@ -20,14 +20,14 @@ class Handler {
       products: Joi.array().items(
         Joi.object({
           productId: Joi.string().required(),
-          amount: Joi.number().integer().max(500).required(),
+          amount: Joi.number().integer().max(500).required().messages({ "number.max": "Maximum of 500 products in purchases at the supplier" }),
           resalePrice: Joi.number().required(),
         }),
       ).optional(),
       equipments: Joi.array().items(
         Joi.object({
           equipmentId: Joi.string().required(),
-          amount: Joi.number().integer().max(20).required(),
+          amount: Joi.number().integer().max(20).required().messages({ "number.max": "Maximum of 20 equipment in purchases at the supplier" }),
         }),
       ).optional(),
     });

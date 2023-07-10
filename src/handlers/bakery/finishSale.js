@@ -18,7 +18,7 @@ class Handler {
       products: Joi.array().items(
         Joi.object({
           productId: Joi.string(),
-          amount: Joi.number().integer().max(30).required(),
+          amount: Joi.number().integer().max(30).required().messages({ "number.max": "Maximum of 30 products per sale" }),
         })
       ),
     });
