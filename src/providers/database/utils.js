@@ -50,4 +50,23 @@ async function getRelations({ joinTable, itemId, itemSide = 'left' }) {
   return transformed;
 }
 
-module.exports = { verifyIfExistsInTable, verifyIfExistsInList, removeActiveProperty, getRelations };
+async function writePutTransaction(transactionsItems) {
+  const dynamoDB = new AWS.DynamoDB.DocumentClient();
+
+  const TransactItems = transactionsItems.map(({ item, tableName }) => ({
+    Put: {
+      Item: {
+        ...item,
+        createdAt: new Date().toISOString(),
+        active: true,
+      },
+      TableName: tableName
+    }
+  }));
+
+  await dynamoDB.transactWrite({
+    TransactItems
+  }).promise();
+}
+
+module.exports = { verifyIfExistsInTable, verifyIfExistsInList, removeActiveProperty, getRelations, writePutTransaction };

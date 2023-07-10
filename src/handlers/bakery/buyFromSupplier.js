@@ -1,7 +1,7 @@
 const Joi = require('joi');
 
 const DatabaseProvider = require('../../providers/database');
-const { getRelations, verifyIfExistsInList } = require('../../providers/database/utils');
+const { getRelations, verifyIfExistsInList, writePutTransaction } = require('../../providers/database/utils');
 
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
@@ -68,6 +68,7 @@ class Handler {
       if (!products?.length && !equipments?.length)
         return this.handlerError({ statusCode: 400, message: 'You must purchase at least one item' });
 
+      const transactItems = [];
       let productsTotalPrice;
       let equipmentsTotalPrice;
 
@@ -95,10 +96,14 @@ class Handler {
         }, 0);
 
         products.forEach(({ productId, resalePrice }) => {
-          this.unitProductDatabase.create({
+          const item = {
             id: `${unitId}#${productId}`,
             price: resalePrice,
-          });
+          }
+
+          const tableName = 'UnitProduct';
+
+          transactItems.push({ item, tableName });
         });
       }
 
@@ -128,11 +133,17 @@ class Handler {
         }, 0);
 
         equipments.forEach(({ equipmentId }) => {
-          this.unitEquipmentDatabase.create({
+          const item = {
             id: `${unitId}#${equipmentId}`,
-          });
+          };
+
+          const tableName = 'UnitEquipment';
+          
+          transactItems.push({ item, tableName });
         });
       }
+
+      await writePutTransaction(transactItems);
 
       return this.handlerSuccess({ productsTotalPrice, equipmentsTotalPrice });
     } catch (error) {
