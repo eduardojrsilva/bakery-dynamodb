@@ -44,6 +44,8 @@ class Handler {
         return productsIds.includes(productId);
       });
 
+      console.log('sales: ', sales);
+
       const allProducts = await this.productsDatabase.findAll();
       const products = allProducts.filter(({ id }) => productsIds.includes(id));
 
@@ -54,17 +56,21 @@ class Handler {
         };
       }, {});
 
-      const amountByProduct = sales.reduce((acc, { id, amount }) => {
-        const [productId, _] = id.split('#');
+      const amountByProduct = sales.reduce((acc, { productId, amount }) => {
         const productName = productsNames[productId];
     
-        const oldAmount = acc[productId] || 0;
+        const oldAmount = acc[productName] || 0;
+
+        console.log('acc: ', acc);
+        console.log('oldAmount: ', oldAmount);
     
         return {
           ...acc,
           [productName]: oldAmount + amount
         }
       }, {});
+
+      console.log('amountByProduct: ', amountByProduct);
 
       const sorted = Object.entries(amountByProduct).sort(([_a, amountA], [_b, amountB]) => amountB - amountA);
 
