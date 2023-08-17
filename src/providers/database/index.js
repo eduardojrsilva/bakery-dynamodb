@@ -1,7 +1,6 @@
 const AWS = require('aws-sdk');
-const { v4 } = require('uuid');
 
-const { verifyIfExistsInList, removeActiveProperty } = require('./utils');
+const { removeActiveProperty } = require('./utils');
 
 class DatabaseProvider {
   constructor() {
