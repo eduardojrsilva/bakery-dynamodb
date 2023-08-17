@@ -6,7 +6,7 @@ const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Products');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
@@ -14,6 +14,17 @@ class Handler {
       id: Joi.string().required(),
       name: Joi.string().optional(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const transformed = {
+      id: sk,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -37,11 +48,17 @@ class Handler {
 
   async main(event) {
     try {
-      const data = event.body;
+      const { id, ...data } = event.body;
 
-      const product = await this.database.update(data);
+      const params = {
+        pk: 'PRODUCT',
+        sk: id,
+        ...data,
+      }
 
-      return this.handlerSuccess(product);
+      const product = await this.database.update(params);
+
+      return this.handlerSuccess(this.transformResponse(product));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
