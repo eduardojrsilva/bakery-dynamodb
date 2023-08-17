@@ -5,6 +5,19 @@ class Handler {
     this.database = new DatabaseProvider('Units');
   }
 
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = pk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
+  }
+
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -28,9 +41,9 @@ class Handler {
     try {
       const { id } = event.pathParameters;
 
-      const unit = await this.database.delete(id);
+      const unit = await this.database.delete(`UNIT#${id}`, 'METADATA');
 
-      return this.handlerSuccess(unit);
+      return this.handlerSuccess(this.transformResponse(unit));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

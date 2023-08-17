@@ -5,6 +5,19 @@ class Handler {
     this.database = new DatabaseProvider('Units');
   }
 
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = pk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
+  }
+
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -28,7 +41,7 @@ class Handler {
     try {
       const units = await this.database.findAll();
 
-      return this.handlerSuccess(units);
+      return this.handlerSuccess(units.map(this.transformResponse));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
