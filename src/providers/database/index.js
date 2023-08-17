@@ -4,14 +4,13 @@ const { v4 } = require('uuid');
 const { verifyIfExistsInList, removeActiveProperty } = require('./utils');
 
 class DatabaseProvider {
-  constructor(TableName) {
-    this.dynamoDB = new AWS.DynamoDB.DocumentClient({ params: { TableName } });
+  constructor() {
+    this.dynamoDB = new AWS.DynamoDB.DocumentClient({ params: { TableName: 'Bakery' } });
   }
 
   async create(data) {
     const params = {
       Item: {
-        id: v4(),
         ...data,
         createdAt: new Date().toISOString(),
         active: true,
@@ -25,10 +24,11 @@ class DatabaseProvider {
     return item;
   }
 
-  async findById(id) {
+  async findById(pk, sk) {
     const params = {
       Key: {
-        id
+        pk,
+        sk,
       }
     }
   
@@ -50,17 +50,11 @@ class DatabaseProvider {
   }
 
   async update(data) {
-    const { id, ...item } = data;
+    const { pk, sk, ...item } = data;
 
     const keysToUpdate = Object.keys(item);
 
     if (!keysToUpdate.length) throw new Error('You need to update at least one field');
-
-    const allItems = await this.findAll();
-
-    const itemExists = verifyIfExistsInList(allItems, id);
-
-    if (!itemExists) throw new Error('Item not found');
 
     const UpdateExpression = `SET ${keysToUpdate.map((key) => `#${key} = :new${key}`).join(', ')}, #updatedAt = :now`;
 
@@ -76,7 +70,8 @@ class DatabaseProvider {
 
     const params = {
       Key: {
-        id
+        pk,
+        sk,
       },
       UpdateExpression,
       ExpressionAttributeNames,
@@ -91,16 +86,12 @@ class DatabaseProvider {
     return updated;
   }
 
-  async delete(id) {
-    const allItems = await this.findAll();
-
-    const itemExists = verifyIfExistsInList(allItems, id);
-
-    if (!itemExists) throw new Error('Item not found');
+  async delete(pk, sk) {
 
     const params = {
       Key: {
-        id
+        pk,
+        sk,
       },
       UpdateExpression: 'SET #active = :disabled',
       ExpressionAttributeNames: {
