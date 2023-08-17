@@ -2,7 +2,18 @@ const DatabaseProvider = require('../../providers/database');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Customers');
+    this.database = new DatabaseProvider();
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const transformed = {
+      id: sk,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -28,9 +39,9 @@ class Handler {
     try {
       const { id } = event.pathParameters;
 
-      const customer = await this.database.delete(id);
+      const customer = await this.database.delete('CUSTOMER', id);
 
-      return this.handlerSuccess(customer);
+      return this.handlerSuccess(this.transformResponse(customer));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

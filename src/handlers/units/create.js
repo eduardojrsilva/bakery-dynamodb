@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { v4 } = require('uuid');
 
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
@@ -13,6 +14,19 @@ class Handler {
     return Joi.object({
       address: Joi.string().required(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = pk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -38,9 +52,15 @@ class Handler {
     try {
       const data = event.body;
 
-      const unit = await this.database.create(data);
+      const item = {
+        pk: `UNIT#${v4()}`,
+        sk: 'METADATA',
+        ...data,
+      }
 
-      return this.handlerSuccess(unit);
+      const unit = await this.database.create(item);
+
+      return this.handlerSuccess(this.transformResponse(unit));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

@@ -16,6 +16,19 @@ class Handler {
     });
   }
 
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = pk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
+  }
+
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -37,11 +50,17 @@ class Handler {
 
   async main(event) {
     try {
-      const data = event.body;
+      const { id, ...data } = event.body;
 
-      const unit = await this.database.update(data);
+      const params = {
+        pk: `UNIT#${id}`,
+        sk: 'METADATA',
+        ...data,
+      }
 
-      return this.handlerSuccess(unit);
+      const unit = await this.database.update(params);
+
+      return this.handlerSuccess(this.transformResponse(unit));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
