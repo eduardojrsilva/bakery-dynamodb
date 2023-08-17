@@ -5,6 +5,17 @@ class Handler {
     this.database = new DatabaseProvider('Equipment');
   }
 
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const transformed = {
+      id: sk,
+      ...data,
+    };
+
+    return transformed;
+  }
+
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -28,7 +39,7 @@ class Handler {
     try {
       const equipment = await this.database.findAll();
 
-      return this.handlerSuccess(equipment);
+      return this.handlerSuccess(equipment.map(this.transformResponse));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

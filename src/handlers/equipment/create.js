@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { v4 } = require('uuid');
 
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
@@ -6,7 +7,7 @@ const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Equipment');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
@@ -15,6 +16,17 @@ class Handler {
       price: Joi.number().required(),
       category: Joi.string().required(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const transformed = {
+      id: sk,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -40,9 +52,15 @@ class Handler {
     try {
       const data = event.body;
 
-      const equipment = await this.database.create(data);
+      const item = {
+        pk: 'EQUIPMENT',
+        sk: v4(),
+        ...data,
+      }
 
-      return this.handlerSuccess(equipment);
+      const equipment = await this.database.create(item);
+
+      return this.handlerSuccess(this.transformResponse(equipment));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
