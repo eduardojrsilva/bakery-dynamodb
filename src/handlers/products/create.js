@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { v4 } = require('uuid');
 
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
@@ -6,13 +7,24 @@ const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Products');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
     return Joi.object({
       name: Joi.string().required(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const transformed = {
+      id: sk,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -38,9 +50,15 @@ class Handler {
     try {
       const data = event.body;
 
-      const product = await this.database.create(data);
+      const item = {
+        pk: 'PRODUCT',
+        sk: v4(),
+        ...data,
+      }
 
-      return this.handlerSuccess(product);
+      const product = await this.database.create(item);
+
+      return this.handlerSuccess(this.transformResponse(product));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

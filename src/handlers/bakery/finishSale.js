@@ -73,6 +73,7 @@ class Handler {
 
       await Promise.all(products.map(async (product) => {
         await this.productSaleDatabase.create({
+          id: `${product.productId}#${sale.id}`,
           saleId: sale.id,
           ...product 
         });
