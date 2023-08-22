@@ -1,5 +1,6 @@
 const Joi = require('joi');
-const { v4 } = require('uuid');
+
+const generateUniqueId = require('../../util/id');
 
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
@@ -50,9 +51,11 @@ class Handler {
     try {
       const data = event.body;
 
+      const sk = generateUniqueId();
+
       const item = {
         pk: 'PRODUCT',
-        sk: v4(),
+        sk,
         ...data,
       }
 
