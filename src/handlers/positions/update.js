@@ -6,7 +6,7 @@ const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Positions');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {

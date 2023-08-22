@@ -2,7 +2,7 @@ const DatabaseProvider = require('../../providers/database');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Equipment');
+    this.database = new DatabaseProvider();
   }
 
   transformResponse(response) {

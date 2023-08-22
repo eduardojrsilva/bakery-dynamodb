@@ -6,7 +6,7 @@ const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Employees');
+    this.database = new DatabaseProvider();
   }
 
   transformResponse(response) {

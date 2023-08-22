@@ -1,5 +1,7 @@
 const Joi = require('joi');
 
+const generateUniqueId = require('../../util/id');
+
 const DatabaseProvider = require('../../providers/database');
 const { verifyIfExistsInTable } = require('../../providers/database/utils');
 const decoratorValidator = require('../../util/decoratorValidator');
@@ -7,14 +9,26 @@ const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Sales');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
     return Joi.object({
-      sellerId: Joi.string().required(),
-      customerId: Joi.string().required(),
+      totalPrice: Joi.number().required(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = sk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -40,17 +54,17 @@ class Handler {
     try {
       const data = event.body;
 
-      const sellerExists = await verifyIfExistsInTable('Employees', data.sellerId);
+      const id = generateUniqueId();
 
-      if (!sellerExists) return this.handlerError({ statusCode: 400, message: 'Seller not found' });
-      
-      const customerExists = await verifyIfExistsInTable('Customers', data.customerId);
-      
-      if (!customerExists) return this.handlerError({ statusCode: 400, message: 'Customer not found' });
+      const item = {
+        pk: 'SALE',
+        sk: `METADATA#${id}`,
+        ...data,
+      }
 
-      const sale = await this.database.create(data);
+      const sale = await this.database.create(item);
 
-      return this.handlerSuccess(sale);
+      return this.handlerSuccess(this.transformResponse(sale));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
