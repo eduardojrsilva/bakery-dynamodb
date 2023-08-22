@@ -9,9 +9,23 @@ class Handler {
     this.database = new DatabaseProvider('Employees');
   }
 
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const id = sk.split('#')[3];
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
+  }
+
   static validator() {
     return Joi.object({
       id: Joi.string().required(),
+      unitId: Joi.string().required(),
       name: Joi.string().optional(),
     });
   }
@@ -37,11 +51,17 @@ class Handler {
 
   async main(event) {
     try {
-      const data = event.body;
+      const { id, unitId, ...data } = event.body;
 
-      const employees = await this.database.update(data);
+      const params = {
+        pk: 'UNIT',
+        sk: `UNIT#${unitId}#EMPLOYEE#${id}`,
+        ...data,
+      }
 
-      return this.handlerSuccess(employees);
+      const employee = await this.database.update(params);
+
+      return this.handlerSuccess(this.transformResponse(employee));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

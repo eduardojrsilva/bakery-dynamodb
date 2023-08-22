@@ -5,6 +5,19 @@ class Handler {
     this.database = new DatabaseProvider('Positions');
   }
 
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = sk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
+  }
+
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -28,9 +41,12 @@ class Handler {
     try {
       const { id } = event.pathParameters;
 
-      const position = await this.database.findById(id);
+      const position = await this.database.findById({
+        pk: 'POSITION',
+        sk: `METADATA#${id}`,
+      });
 
-      return this.handlerSuccess(position);
+      return this.handlerSuccess(this.transformResponse(position));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

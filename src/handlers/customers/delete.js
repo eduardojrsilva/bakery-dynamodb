@@ -39,7 +39,10 @@ class Handler {
     try {
       const { id } = event.pathParameters;
 
-      const customer = await this.database.delete('CUSTOMER', id);
+      const customer = await this.database.delete({
+        pk: 'CUSTOMER',
+        sk: id,
+      });
 
       return this.handlerSuccess(this.transformResponse(customer));
     } catch (error) {

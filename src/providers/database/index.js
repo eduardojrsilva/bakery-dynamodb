@@ -23,13 +23,13 @@ class DatabaseProvider {
     return item;
   }
 
-  async findById(pk, sk) {
+  async findById({ pk, sk }) {
     const params = {
       Key: {
         pk,
         sk,
       }
-    }
+    };
   
     const { Item } = await this.dynamoDB.get(params).promise();
 
@@ -40,8 +40,28 @@ class DatabaseProvider {
     return item;
   }
 
-  async findAll() {
-    const { Items } = await this.dynamoDB.scan().promise();
+  async findAll({ pk, sk }) {
+    const { skConditionExpression, skAttributeValues } = sk ? {
+      skConditionExpression: ` and begins_with(sk, :sk)`,
+      skAttributeValues: { ':sk': sk },
+    } : {
+      skConditionExpression: '',
+      skAttributeValues: {},
+    };
+
+    const KeyConditionExpression = `pk = :pk${skConditionExpression}`;
+
+    const ExpressionAttributeValues = {
+      ':pk': pk,
+      ...skAttributeValues,
+    };
+    
+    const params = {
+      KeyConditionExpression,
+      ExpressionAttributeValues,
+    };
+
+    const { Items } = await this.dynamoDB.query(params).promise();
 
     const activeItems = Items.filter(({ active }) => active).map((item) => removeActiveProperty(item));
 
@@ -85,8 +105,7 @@ class DatabaseProvider {
     return updated;
   }
 
-  async delete(pk, sk) {
-
+  async delete({ pk, sk }) {
     const params = {
       Key: {
         pk,

@@ -2,7 +2,20 @@ const DatabaseProvider = require('../../providers/database');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Positions');
+    this.database = new DatabaseProvider();
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = sk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -26,9 +39,12 @@ class Handler {
 
   async main() {
     try {
-      const positions = await this.database.findAll();
+      const positions = await this.database.findAll({
+        pk: 'POSITION',
+        sk: 'METADATA'
+      });
 
-      return this.handlerSuccess(positions);
+      return this.handlerSuccess(positions.map(this.transformResponse));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

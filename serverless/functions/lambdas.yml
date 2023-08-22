@@ -159,14 +159,14 @@ employees-findById:
   handler: src/handlers/index.employeesFindById
   events:
     - httpApi:
-        path: /employees/{id}
+        path: /employees/{unitId}/{id}
         method: get
 
 employees-findAll:
   handler: src/handlers/index.employeesFindAll
   events:
     - httpApi:
-        path: /employees
+        path: /employees/findAll/{unitId}
         method: get
 
 employees-update:
@@ -180,7 +180,7 @@ employees-delete:
   handler: src/handlers/index.employeesDelete
   events:
     - httpApi:
-        path: /employees/{id}
+        path: /employees/{unitId}/{id}
         method: delete
 
 # POSITIONS

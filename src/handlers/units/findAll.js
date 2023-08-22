@@ -2,13 +2,13 @@ const DatabaseProvider = require('../../providers/database');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Units');
+    this.database = new DatabaseProvider();
   }
 
   transformResponse(response) {
     const { pk, sk, ...data } = response;
 
-    const [_, id] = pk.split('#');
+    const [_, id] = sk.split('#');
 
     const transformed = {
       id,
@@ -39,7 +39,10 @@ class Handler {
 
   async main() {
     try {
-      const units = await this.database.findAll();
+      const units = await this.database.findAll({
+        pk: 'UNIT',
+        sk: 'METADATA'
+      });
 
       return this.handlerSuccess(units.map(this.transformResponse));
     } catch (error) {

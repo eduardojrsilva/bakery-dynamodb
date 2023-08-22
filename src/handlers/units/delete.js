@@ -2,13 +2,13 @@ const DatabaseProvider = require('../../providers/database');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Units');
+    this.database = new DatabaseProvider();
   }
 
   transformResponse(response) {
     const { pk, sk, ...data } = response;
 
-    const [_, id] = pk.split('#');
+    const [_, id] = sk.split('#');
 
     const transformed = {
       id,
@@ -41,7 +41,10 @@ class Handler {
     try {
       const { id } = event.pathParameters;
 
-      const unit = await this.database.delete(`UNIT#${id}`, 'METADATA');
+      const unit = await this.database.delete({
+        pk: 'UNIT',
+        sk: `METADATA#${id}`,
+      });
 
       return this.handlerSuccess(this.transformResponse(unit));
     } catch (error) {

@@ -1,12 +1,14 @@
 const Joi = require('joi');
 
+const generateUniqueId = require('../../util/id');
+
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Suppliers');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
@@ -14,6 +16,19 @@ class Handler {
       cnpj: Joi.string().required(),
       name: Joi.string().required(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = sk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -39,11 +54,17 @@ class Handler {
     try {
       const data = event.body;
 
-      // verify cnpj
+      const id = generateUniqueId();
 
-      const supplier = await this.database.create(data);
+      const item = {
+        pk: 'SUPPLIER',
+        sk: `METADATA#${id}`,
+        ...data,
+      }
 
-      return this.handlerSuccess(supplier);
+      const supplier = await this.database.create(item);
+
+      return this.handlerSuccess(this.transformResponse(supplier));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

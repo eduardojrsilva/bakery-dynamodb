@@ -37,7 +37,9 @@ class Handler {
 
   async main() {
     try {
-      const customers = await this.database.findAll();
+      const customers = await this.database.findAll({
+        pk: 'CUSTOMER',
+      });
 
       return this.handlerSuccess(customers.map(this.transformResponse));
     } catch (error) {

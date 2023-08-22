@@ -2,7 +2,20 @@ const DatabaseProvider = require('../../providers/database');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Positions');
+    this.database = new DatabaseProvider();
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const [_, id] = sk.split('#');
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -28,9 +41,12 @@ class Handler {
     try {
       const { id } = event.pathParameters;
 
-      const position = await this.database.delete(id);
+      const position = await this.database.delete({
+        pk: 'POSITION',
+        sk: `METADATA#${id}`,
+      });
 
-      return this.handlerSuccess(position);
+      return this.handlerSuccess(this.transformResponse(position));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

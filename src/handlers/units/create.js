@@ -8,7 +8,7 @@ const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('Units');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
@@ -20,7 +20,7 @@ class Handler {
   transformResponse(response) {
     const { pk, sk, ...data } = response;
 
-    const [_, id] = pk.split('#');
+    const [_, id] = sk.split('#');
 
     const transformed = {
       id,
@@ -56,8 +56,8 @@ class Handler {
       const id = generateUniqueId();
 
       const item = {
-        pk: `UNIT#${id}`,
-        sk: 'METADATA',
+        pk: 'UNIT',
+        sk: `METADATA#${id}`,
         ...data,
       }
 
