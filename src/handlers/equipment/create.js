@@ -53,12 +53,16 @@ class Handler {
     try {
       const data = event.body;
 
-      const sk = generateUniqueId();
+      const id = generateUniqueId();
 
       const item = {
         pk: 'EQUIPMENT',
-        sk,
+        sk: id,
         ...data,
+        equipment_supplier_pk: `EQUIPMENT#${id}`,
+        equipment_supplier_sk: `EQUIPMENT#${id}`,
+        equipment_unit_pk: `EQUIPMENT#${id}`,
+        equipment_unit_sk: `EQUIPMENT#${id}`,
       }
 
       const equipment = await this.database.create(item);

@@ -4,11 +4,9 @@ const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 
-const { verifyIfExistsInTable } = require('../../providers/database/utils');
-
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('SupplierProduct');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
@@ -16,7 +14,21 @@ class Handler {
       supplierId: Joi.string().required(),
       productId: Joi.string().required(),
       price: Joi.number().required(),
+      amount: Joi.number().required(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const id = sk.split('#')[3];
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -44,19 +56,17 @@ class Handler {
 
       const { supplierId, productId, ...params } = data;
       
-      const supplierExists = await verifyIfExistsInTable('Suppliers', supplierId);
-      
-      if (!supplierExists) return this.handlerError({ statusCode: 400, message: 'Supplier not found' });
+      const item = {
+        pk: 'SUPPLIER',
+        sk: `SUPPLIER#${supplierId}#PRODUCT#${productId}`,
+        ...params,
+        product_supplier_pk: `PRODUCT#${productId}`,
+        product_supplier_sk: `SUPPLIER#${supplierId}`,
+      }
 
-      const productExists = await verifyIfExistsInTable('Products', productId);
+      const productSupplier = await this.database.create(item);
 
-      if (!productExists) return this.handlerError({ statusCode: 400, message: 'Product not found' });
-
-      const id = `${supplierId}#${productId}`;
-
-      const supplierProduct = await this.database.create({ id, ...params });
-
-      return this.handlerSuccess(supplierProduct);
+      return this.handlerSuccess(this.transformResponse(productSupplier));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

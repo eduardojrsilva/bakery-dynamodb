@@ -355,7 +355,7 @@ supplierProduct-findAll:
   handler: src/handlers/index.supplierProductFindAll
   events:
     - httpApi:
-        path: /supplier-product
+        path: /supplier-products/{id}
         method: get
 
 # UNIT PRODUCT

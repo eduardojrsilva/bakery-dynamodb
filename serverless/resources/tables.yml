@@ -7,11 +7,198 @@ BakeryTable:
         AttributeType: S
       - AttributeName: sk
         AttributeType: S
+
+      - AttributeName: product_supplier_pk
+        AttributeType: S
+      - AttributeName: product_supplier_sk
+        AttributeType: S
+
+      - AttributeName: product_unit_pk
+        AttributeType: S
+      - AttributeName: product_unit_sk
+        AttributeType: S
+
+      - AttributeName: product_sale_pk
+        AttributeType: S
+      - AttributeName: product_sale_sk
+        AttributeType: S
+
+      - AttributeName: equipment_supplier_pk
+        AttributeType: S
+      - AttributeName: equipment_supplier_sk
+        AttributeType: S
+
+      - AttributeName: equipment_unit_pk
+        AttributeType: S
+      - AttributeName: equipment_unit_sk
+        AttributeType: S
+
+      - AttributeName: employee_sale_pk
+        AttributeType: S
+      - AttributeName: employee_sale_sk
+        AttributeType: S
+
+      - AttributeName: employee_position_pk
+        AttributeType: S
+      - AttributeName: employee_position_sk
+        AttributeType: S
+
+      - AttributeName: position_unit_pk
+        AttributeType: S
+      - AttributeName: position_unit_sk
+        AttributeType: S
+
+      - AttributeName: customer_unit_pk
+        AttributeType: S
+      - AttributeName: customer_unit_sk
+        AttributeType: S
+
+      - AttributeName: unit_sale_pk
+        AttributeType: S
+      - AttributeName: unit_sale_sk
+        AttributeType: S
+
+      - AttributeName: customer_sale_pk
+        AttributeType: S
+      - AttributeName: customer_sale_sk
+        AttributeType: S
     KeySchema:
       - AttributeName: pk
         KeyType: HASH
       - AttributeName: sk
         KeyType: RANGE
+    GlobalSecondaryIndexes:
+      - IndexName: ProductSupplier
+        KeySchema:
+          - AttributeName: product_supplier_pk
+            KeyType: HASH
+          - AttributeName: product_supplier_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: ProductUnit
+        KeySchema:
+          - AttributeName: product_unit_pk
+            KeyType: HASH
+          - AttributeName: product_unit_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: ProductSale
+        KeySchema:
+          - AttributeName: product_sale_pk
+            KeyType: HASH
+          - AttributeName: product_sale_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: EquipmentSupplier
+        KeySchema:
+          - AttributeName: equipment_supplier_pk
+            KeyType: HASH
+          - AttributeName: equipment_supplier_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: EquipmentUnit
+        KeySchema:
+          - AttributeName: equipment_unit_pk
+            KeyType: HASH
+          - AttributeName: equipment_unit_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: EmployeeSale
+        KeySchema:
+          - AttributeName: employee_sale_pk
+            KeyType: HASH
+          - AttributeName: employee_sale_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: EmployeePosition
+        KeySchema:
+          - AttributeName: employee_position_pk
+            KeyType: HASH
+          - AttributeName: employee_position_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: PositionUnit
+        KeySchema:
+          - AttributeName: position_unit_pk
+            KeyType: HASH
+          - AttributeName: position_unit_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: CustomerUnit
+        KeySchema:
+          - AttributeName: customer_unit_pk
+            KeyType: HASH
+          - AttributeName: customer_unit_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: UnitSale
+        KeySchema:
+          - AttributeName: unit_sale_pk
+            KeyType: HASH
+          - AttributeName: unit_sale_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+      - IndexName: CustomerSale
+        KeySchema:
+          - AttributeName: customer_sale_pk
+            KeyType: HASH
+          - AttributeName: customer_sale_sk
+            KeyType: RANGE
+        Projection:
+          ProjectionType: 'ALL'
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
     ProvisionedThroughput:
       ReadCapacityUnits: 1
       WriteCapacityUnits: 1

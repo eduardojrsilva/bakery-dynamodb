@@ -15,17 +15,36 @@ class Handler {
   static validator() {
     return Joi.object({
       totalPrice: Joi.number().required(),
+      unitId: Joi.number().required(),
+      employeeId: Joi.number().required(),
+      customerId: Joi.number().required(),
     });
   }
 
   transformResponse(response) {
-    const { pk, sk, ...data } = response;
+    const {
+      pk,
+      sk,
+      unit_sale_pk,
+      unit_sale_sk,
+      customer_sale_pk,
+      customer_sale_sk,
+      employee_sale_pk,
+      employee_sale_sk,
+      ...data
+    } = response;
 
-    const [_, id] = sk.split('#');
+    const [_sale, id] = sk.split('#');
+    const [_unit, unit] = unit_sale_pk.split('#');
+    const [_employee, employee] = employee_sale_pk.split('#');
+    const [_customer, customer] = customer_sale_pk.split('#');
 
     const transformed = {
       id,
       ...data,
+      unit,
+      employee,
+      customer,
     };
 
     return transformed;
@@ -52,14 +71,20 @@ class Handler {
 
   async main(event) {
     try {
-      const data = event.body;
+      const { unitId, customerId, employeeId, ...params } = event.body;
 
       const id = generateUniqueId();
 
       const item = {
         pk: 'SALE',
         sk: `METADATA#${id}`,
-        ...data,
+        ...params,
+        unit_sale_pk: `UNIT#${unitId}`,
+        unit_sale_sk: `SALE#${id}`,
+        customer_sale_pk: `CUSTOMER#${customerId}`,
+        customer_sale_sk: `SALE#${id}`,
+        employee_sale_pk: `EMPLOYEE#${employeeId}`,
+        employee_sale_sk: `SALE#${id}`,
       }
 
       const sale = await this.database.create(item);

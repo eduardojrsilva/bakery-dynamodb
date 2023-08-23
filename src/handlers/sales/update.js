@@ -17,13 +17,29 @@ class Handler {
   }
 
   transformResponse(response) {
-    const { pk, sk, ...data } = response;
+    const {
+      pk,
+      sk,
+      unit_sale_pk,
+      unit_sale_sk,
+      customer_sale_pk,
+      customer_sale_sk,
+      employee_sale_pk,
+      employee_sale_sk,
+      ...data
+    } = response;
 
-    const [_, id] = sk.split('#');
+    const [_sale, id] = sk.split('#');
+    const [_unit, unit] = unit_sale_pk.split('#');
+    const [_employee, employee] = employee_sale_pk.split('#');
+    const [_customer, customer] = customer_sale_pk.split('#');
 
     const transformed = {
       id,
       ...data,
+      unit,
+      employee,
+      customer,
     };
 
     return transformed;

@@ -60,6 +60,10 @@ class Handler {
         pk: 'UNIT',
         sk: `UNIT#${unitId}#EMPLOYEE#${id}`,
         ...data,
+        employee_sale_pk: `EMPLOYEE#${id}`,
+        employee_sale_sk: `EMPLOYEE#${id}`,
+        employee_position_pk: `EMPLOYEE#${id}`,
+        employee_position_sk: `EMPLOYEE#${id}`,
       }
 
       const employee = await this.database.create(item);

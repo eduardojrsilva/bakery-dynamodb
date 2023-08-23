@@ -59,6 +59,8 @@ class Handler {
         pk: 'POSITION',
         sk: `METADATA#${id}`,
         ...data,
+        position_unit_pk: `POSITION#${id}`,
+        position_unit_sk: `POSITION#${id}`,
       }
 
       const position = await this.database.create(item);
