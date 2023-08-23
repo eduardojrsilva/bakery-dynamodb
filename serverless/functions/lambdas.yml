@@ -339,7 +339,7 @@ unitEquipment-findAll:
   handler: src/handlers/index.unitEquipmentFindAll
   events:
     - httpApi:
-        path: /unit-equipment
+        path: /unit-equipment/{id}
         method: get
 
 # SUPPLIER PRODUCT
