@@ -4,8 +4,6 @@ const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 
-const { verifyIfExistsInTable } = require('../../providers/database/utils');
-
 class Handler {
   constructor(){
     this.employeeDatabase = new DatabaseProvider('Employees');
@@ -14,7 +12,7 @@ class Handler {
 
   static validator() {
     return Joi.object({
-      unitsId: Joi.string(),
+      unitId: Joi.string(),
       positions: Joi.array().items(
         Joi.object({
           positionId: Joi.string(),
@@ -25,10 +23,9 @@ class Handler {
     });
   };
 
-  handlerSuccess(data) {
+  handlerSuccess() {
     const response = {
       statusCode: 200,
-      body: JSON.stringify(data)
     }
 
     return response;
@@ -48,40 +45,45 @@ class Handler {
     try {
       const data = event.body;
 
-      const { unitsId, employeeName, positions } = data;
+      const { unitId, employeeName, positions } = data;
       
-      const employee = await this.employeeDatabase.create({ name: employeeName, unitsId });
+      const employeeId = generateUniqueId();
 
-      const unitExists = await verifyIfExistsInTable('Units', unitsId);
-      
-      if (!unitExists) return this.handlerError({ statusCode: 400, message: 'Units not found' });
+      const employee = {
+        pk: 'UNIT',
+        sk: `UNIT#${unitId}#EMPLOYEE#${employeeId}`,
+        name: employeeName,
+        employee_sale_pk: `EMPLOYEE#${employeeId}`,
+        employee_sale_sk: `EMPLOYEE#${employeeId}`,
+        employee_position_pk: `EMPLOYEE#${employeeId}`,
+        employee_position_sk: `EMPLOYEE#${employeeId}`,
+      }
 
-      const employeeExists = await verifyIfExistsInTable('Employees', employee.id);
-      
-      if (!employeeExists) return this.handlerError({ statusCode: 400, message: 'Employee not found' });
+      await this.database.create(employee);
 
-      const positionsExist = await Promise.all(
-        positions.map(async ({ positionId }) => {
-          return await verifyIfExistsInTable('Positions', positionId);
-        })
-      );
-      
-      const positionExists = positionsExist.every((exists) => exists);
+      positions.forEach(({ positionId, salary }) => {
+        const position = {
+          pk: 'POSITION',
+          sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
+          salary,
+          employee_position_pk: `EMPLOYEE#${employeeId}`,
+          employee_position_sk: `POSITION#${positionId}`,
+        }
+  
+        await this.database.create(position);
 
-      if (!positionExists) return this.handlerError({ statusCode: 400, message: 'Position not found' });
+        const unitPosition = {
+          pk: 'UNIT',
+          sk: `UNIT#${unitId}#POSITION#${positionId}`,
+          ...params,
+          position_unit_pk: `POSITION#${positionId}`,
+          position_unit_sk: `UNIT#${unitId}`,
+        }
+  
+        await this.database.create(unitPosition);
+      })
 
-      await Promise.all(positions.map(async ({ positionId, salary }) => {
-        const id = `${employee.id}#${positionId}`;
-
-        await this.employeePositionDatabase.create({
-          id,
-          employeeId: employee.id,
-          positionId,
-          salary 
-        });
-      }));
-
-      return this.handlerSuccess(employee);
+      return this.handlerSuccess();
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
