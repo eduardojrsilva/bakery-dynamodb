@@ -5,6 +5,19 @@ class Handler {
     this.database = new DatabaseProvider('EmployeePosition');
   }
 
+  transformResponse(response) {
+    const { pk, sk, employee_position_pk, employee_position_sk, ...data } = response;
+
+    const id = sk.split('#')[3];
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
+  }
+
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -24,11 +37,16 @@ class Handler {
     return response;
   }
 
-  async main() {
+  async main(event) {
     try {
-      const employeePositionList = await this.database.findAll();
+      const { positionId } = event.pathParameters;
 
-      return this.handlerSuccess(employeePositionList);
+      const employeePosition = await this.database.findAll({
+        pk: 'POSITION',
+        sk: `POSITION#${positionId}#EMPLOYEE`
+      });
+
+      return this.handlerSuccess(employeePosition.map(this.transformResponse));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

@@ -88,6 +88,24 @@ class Handler {
       }
 
       const sale = await this.database.create(item);
+      
+      const unitSale = {
+        pk: 'UNIT',
+        sk: `UNIT#${unitId}#SALE#${id}`,
+        unit_sale_pk: `UNIT#${unitId}`,
+        unit_sale_sk: `UNIT#${unitId}`,
+      }
+
+      await this.database.create(unitSale);
+
+      const unitCustomer = {
+        pk: 'UNIT',
+        sk: `UNIT#${unitId}#CUSTOMER#${customerId}`,
+        customer_unit_pk: `CUSTOMER#${customerId}`,
+        customer_unit_sk: `UNIT#${unitId}`,
+      }
+
+      await this.database.create(unitCustomer);
 
       return this.handlerSuccess(this.transformResponse(sale));
     } catch (error) {

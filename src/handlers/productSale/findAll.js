@@ -2,7 +2,20 @@ const DatabaseProvider = require('../../providers/database');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('ProductSale');
+    this.database = new DatabaseProvider();
+  }
+
+  transformResponse(response) {
+    const { pk, sk, product_sale_pk, product_sale_sk,...data } = response;
+
+    const id = sk.split('#')[3];
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -24,11 +37,16 @@ class Handler {
     return response;
   }
 
-  async main() {
+  async main(event) {
     try {
-      const productSaleList = await this.database.findAll();
+      const { saleId } = event.pathParameters;
 
-      return this.handlerSuccess(productSaleList);
+      const saleProducts = await this.database.findAll({
+        pk: 'SALE',
+        sk: `SALE#${saleId}#PRODUCT`
+      });
+
+      return this.handlerSuccess(saleProducts.map(this.transformResponse));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

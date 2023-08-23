@@ -387,7 +387,7 @@ employeePosition-findAll:
   handler: src/handlers/index.employeePositionFindAll
   events:
     - httpApi:
-        path: /employee-position
+        path: /employee-position/{id}
         method: get
 
 # PRODUCT SALE
@@ -403,7 +403,7 @@ productSale-findAll:
   handler: src/handlers/index.productSaleFindAll
   events:
     - httpApi:
-        path: /product-sale
+        path: /product-sale/{id}
         method: get
 
 # HIRE EMPLOYEE
