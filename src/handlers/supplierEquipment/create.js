@@ -4,18 +4,30 @@ const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 
-const { verifyIfExistsInTable } = require('../../providers/database/utils');
-
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('SupplierEquipment');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
     return Joi.object({
       supplierId: Joi.string().required(),
       equipmentId: Joi.string().required(),
+      amount: Joi.number().required(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const id = sk.split('#')[3];
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -41,19 +53,19 @@ class Handler {
     try {
       const data = event.body;
       
-      const supplierExists = await verifyIfExistsInTable('Suppliers', data.supplierId);
-      
-      if (!supplierExists) return this.handlerError({ statusCode: 400, message: 'Supplier not found' });
+      const { supplierId, equipmentId, ...params } = data;
 
-      const equipmentExists = await verifyIfExistsInTable('Equipment', data.equipmentId);
+      const item = {
+        pk: 'SUPPLIER',
+        sk: `SUPPLIER#${supplierId}#EQUIPMENT#${equipmentId}`,
+        ...params,
+        equipment_supplier_pk: `EQUIPMENT#${equipmentId}`,
+        equipment_supplier_sk: `SUPPLIER#${supplierId}`,
+      }
 
-      if (!equipmentExists) return this.handlerError({ statusCode: 400, message: 'Equipment not found' });
+      const equipmentSupplier = await this.database.create(item);
 
-      const id = `${data.supplierId}#${data.equipmentId}`;
-
-      const supplierEquipment = await this.database.create({ id });
-
-      return this.handlerSuccess(supplierEquipment);
+      return this.handlerSuccess(this.transformResponse(equipmentSupplier));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

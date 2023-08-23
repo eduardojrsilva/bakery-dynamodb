@@ -339,7 +339,7 @@ unitEquipment-findAll:
   handler: src/handlers/index.unitEquipmentFindAll
   events:
     - httpApi:
-        path: /unit-equipment
+        path: /unit-equipment/{id}
         method: get
 
 # SUPPLIER PRODUCT
@@ -371,7 +371,7 @@ unitProduct-findAll:
   handler: src/handlers/index.unitProductFindAll
   events:
     - httpApi:
-        path: /unit-product
+        path: /unit-product/{id}
         method: get
 
 # EMPLOYEE POSITION
