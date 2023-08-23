@@ -15,9 +15,9 @@ class Handler {
   static validator() {
     return Joi.object({
       totalPrice: Joi.number().required(),
-      unitId: Joi.number().required(),
-      employeeId: Joi.number().required(),
-      customerId: Joi.number().required(),
+      unitId: Joi.string().required(),
+      employeeId: Joi.string().required(),
+      customerId: Joi.string().required(),
     });
   }
 
