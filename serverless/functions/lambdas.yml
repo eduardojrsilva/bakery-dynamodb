@@ -371,7 +371,7 @@ unitProduct-findAll:
   handler: src/handlers/index.unitProductFindAll
   events:
     - httpApi:
-        path: /unit-product
+        path: /unit-product/{id}
         method: get
 
 # EMPLOYEE POSITION
