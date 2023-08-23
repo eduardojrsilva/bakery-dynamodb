@@ -61,27 +61,29 @@ class Handler {
 
       await this.database.create(employee);
 
-      positions.forEach(({ positionId, salary }) => {
-        const position = {
-          pk: 'POSITION',
-          sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
-          salary,
-          employee_position_pk: `EMPLOYEE#${employeeId}`,
-          employee_position_sk: `POSITION#${positionId}`,
-        }
-  
-        await this.database.create(position);
+      await Promise.all(
+        positions.forEach(({ positionId, salary }) => {
+          const position = {
+            pk: 'POSITION',
+            sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
+            salary,
+            employee_position_pk: `EMPLOYEE#${employeeId}`,
+            employee_position_sk: `POSITION#${positionId}`,
+          }
+    
+          await this.database.create(position);
 
-        const unitPosition = {
-          pk: 'UNIT',
-          sk: `UNIT#${unitId}#POSITION#${positionId}`,
-          ...params,
-          position_unit_pk: `POSITION#${positionId}`,
-          position_unit_sk: `UNIT#${unitId}`,
-        }
-  
-        await this.database.create(unitPosition);
-      })
+          const unitPosition = {
+            pk: 'UNIT',
+            sk: `UNIT#${unitId}#POSITION#${positionId}`,
+            ...params,
+            position_unit_pk: `POSITION#${positionId}`,
+            position_unit_sk: `UNIT#${unitId}`,
+          }
+    
+          await this.database.create(unitPosition);
+        })
+      )
 
       return this.handlerSuccess();
     } catch (error) {
