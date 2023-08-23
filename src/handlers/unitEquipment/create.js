@@ -4,18 +4,30 @@ const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 
-const { verifyIfExistsInTable } = require('../../providers/database/utils');
-
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('UnitEquipment');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
     return Joi.object({
       unitId: Joi.string().required(),
       equipmentId: Joi.string().required(),
+      amount: Joi.number().required(),
     });
+  }
+
+  transformResponse(response) {
+    const { pk, sk, ...data } = response;
+
+    const id = sk.split('#')[3];
+
+    const transformed = {
+      id,
+      ...data,
+    };
+
+    return transformed;
   }
 
   handlerSuccess(data) {
@@ -41,19 +53,19 @@ class Handler {
     try {
       const data = event.body;
       
-      const unitExists = await verifyIfExistsInTable('Units', data.unitId);
-      
-      if (!unitExists) return this.handlerError({ statusCode: 400, message: 'Unit not found' });
+      const { unitId, equipmentId, ...params } = data;
 
-      const equipmentExists = await verifyIfExistsInTable('Equipment', data.equipmentId);
+      const item = {
+        pk: 'UNIT',
+        sk: `UNIT#${unitId}#EQUIPMENT#${equipmentId}`,
+        ...params,
+        equipment_unit_pk: `EQUIPMENT#${equipmentId}`,
+        equipment_unit_sk: `UNIT#${unitId}`,
+      }
 
-      if (!equipmentExists) return this.handlerError({ statusCode: 400, message: 'Equipment not found' });
+      const equipmentUnit = await this.database.create(item);
 
-      const id = `${data.unitId}#${data.equipmentId}`;
-
-      const unitEquipment = await this.database.create({ id });
-
-      return this.handlerSuccess(unitEquipment);
+      return this.handlerSuccess(this.transformResponse(equipmentUnit));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
