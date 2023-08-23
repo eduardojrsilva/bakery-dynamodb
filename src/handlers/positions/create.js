@@ -18,7 +18,7 @@ class Handler {
   }
 
   transformResponse(response) {
-    const { pk, sk, ...data } = response;
+    const { pk, sk, position_unit_pk, position_unit_sk, ...data } = response;
 
     const [_, id] = sk.split('#');
 
@@ -73,7 +73,6 @@ class Handler {
     }
   }
 }
-
 
 const handler = new Handler();
 
