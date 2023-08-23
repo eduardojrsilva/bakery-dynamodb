@@ -63,7 +63,7 @@ class DatabaseProvider {
 
     const { Items } = await this.dynamoDB.query(params).promise();
 
-    const activeItems = Items.filter(({ active }) => active).map((item) => removeActiveProperty(item));
+    const activeItems = Items.filter(({ active }) => active).map(removeActiveProperty);
 
     return activeItems;
   }
