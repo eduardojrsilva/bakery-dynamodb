@@ -1,10 +1,8 @@
 const Joi = require('joi');
 
-const generateUniqueId = require('../../util/id');
-
-const DatabaseProvider = require('../../providers/database');
-const decoratorValidator = require('../../util/decoratorValidator');
-const globalEnum = require('../../util/globalEnum');
+const DatabaseProvider = require('../../../providers/database');
+const decoratorValidator = require('../../../util/decoratorValidator');
+const globalEnum = require('../../../util/globalEnum');
 
 class Handler {
   constructor(){
@@ -13,15 +11,20 @@ class Handler {
 
   static validator() {
     return Joi.object({
-      name: Joi.string().required(),
+      unitId: Joi.string().required(),
+      productId: Joi.string().required(),
+      price: Joi.number().required(),
+      amount: Joi.number().required(),
     });
   }
 
   transformResponse(response) {
     const { pk, sk, ...data } = response;
 
+    const id = sk.split('#')[3];
+
     const transformed = {
-      id: sk,
+      id,
       ...data,
     };
 
@@ -37,11 +40,11 @@ class Handler {
     return response;
   }
 
-  handlerError(data) {
+  handlerError(error) {
     const response = {
-      statusCode: data.statusCode || 500,
+      statusCode: error.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: "Couldn't create item!"})
+      body: JSON.stringify({error: error.message || "Couldn't create item!"})
     }
 
     return response;
@@ -51,21 +54,19 @@ class Handler {
     try {
       const data = event.body;
 
-      const id = generateUniqueId();
+      const { unitId, productId, ...params } = data;
 
       const item = {
-        pk: 'CUSTOMER',
-        sk: id,
-        ...data,
-        customer_sale_pk: `CUSTOMER#${id}`,
-        customer_sale_sk: `CUSTOMER#${id}`,
-        customer_unit_pk: `CUSTOMER#${id}`,
-        customer_unit_sk: `CUSTOMER#${id}`,
+        pk: 'UNIT',
+        sk: `UNIT#${unitId}#PRODUCT#${productId}`,
+        ...params,
+        product_unit_pk: `PRODUCT#${productId}`,
+        product_unit_sk: `UNIT#${unitId}`,
       }
 
-      const customer = await this.database.create(item);
+      const productUnit = await this.database.create(item);
 
-      return this.handlerSuccess(this.transformResponse(customer));
+      return this.handlerSuccess(this.transformResponse(productUnit));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

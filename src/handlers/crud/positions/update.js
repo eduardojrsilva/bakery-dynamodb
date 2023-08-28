@@ -1,8 +1,8 @@
 const Joi = require('joi');
 
-const DatabaseProvider = require('../../providers/database');
-const decoratorValidator = require('../../util/decoratorValidator');
-const globalEnum = require('../../util/globalEnum');
+const DatabaseProvider = require('../../../providers/database');
+const decoratorValidator = require('../../../util/decoratorValidator');
+const globalEnum = require('../../../util/globalEnum');
 
 class Handler {
   constructor(){
@@ -12,34 +12,18 @@ class Handler {
   static validator() {
     return Joi.object({
       id: Joi.string().required(),
-      totalPrice: Joi.number().optional(),
+      name: Joi.string().optional(),
     });
   }
 
   transformResponse(response) {
-    const {
-      pk,
-      sk,
-      unit_sale_pk,
-      unit_sale_sk,
-      customer_sale_pk,
-      customer_sale_sk,
-      employee_sale_pk,
-      employee_sale_sk,
-      ...data
-    } = response;
+    const { pk, sk, ...data } = response;
 
-    const [_sale, id] = sk.split('#');
-    const [_unit, unit] = unit_sale_pk.split('#');
-    const [_employee, employee] = employee_sale_pk.split('#');
-    const [_customer, customer] = customer_sale_pk.split('#');
+    const [_, id] = sk.split('#');
 
     const transformed = {
       id,
       ...data,
-      unit,
-      employee,
-      customer,
     };
 
     return transformed;
@@ -69,14 +53,14 @@ class Handler {
       const { id, ...data } = event.body;
 
       const params = {
-        pk: 'SALE',
+        pk: 'POSITION',
         sk: `METADATA#${id}`,
         ...data,
       }
 
-      const sale = await this.database.update(params);
+      const position = await this.database.update(params);
 
-      return this.handlerSuccess(this.transformResponse(sale));
+      return this.handlerSuccess(this.transformResponse(position));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

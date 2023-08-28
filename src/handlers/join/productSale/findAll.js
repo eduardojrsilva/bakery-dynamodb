@@ -1,4 +1,4 @@
-const DatabaseProvider = require('../../providers/database');
+const DatabaseProvider = require('../../../providers/database');
 
 class Handler {
   constructor(){
@@ -6,10 +6,12 @@ class Handler {
   }
 
   transformResponse(response) {
-    const { pk, sk, ...data } = response;
+    const { pk, sk, product_sale_pk, product_sale_sk,...data } = response;
+
+    const id = sk.split('#')[3];
 
     const transformed = {
-      id: sk,
+      id,
       ...data,
     };
 
@@ -29,7 +31,7 @@ class Handler {
     const response = {
       statusCode: data.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: "Couldn't read item!"})
+      body: JSON.stringify({error: "Couldn't read items!"})
     }
 
     return response;
@@ -37,11 +39,14 @@ class Handler {
 
   async main(event) {
     try {
-      const { id } = event.pathParameters;
+      const { saleId } = event.pathParameters;
 
-      const equipment = await this.database.findById('EQUIPMENT', id);
+      const saleProducts = await this.database.findAll({
+        pk: 'SALE',
+        sk: `SALE#${saleId}#PRODUCT`
+      });
 
-      return this.handlerSuccess(this.transformResponse(equipment));
+      return this.handlerSuccess(saleProducts.map(this.transformResponse));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

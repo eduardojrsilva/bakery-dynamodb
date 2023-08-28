@@ -1,10 +1,8 @@
 const Joi = require('joi');
 
-const generateUniqueId = require('../../util/id');
-
-const DatabaseProvider = require('../../providers/database');
-const decoratorValidator = require('../../util/decoratorValidator');
-const globalEnum = require('../../util/globalEnum');
+const DatabaseProvider = require('../../../providers/database');
+const decoratorValidator = require('../../../util/decoratorValidator');
+const globalEnum = require('../../../util/globalEnum');
 
 class Handler {
   constructor(){
@@ -13,15 +11,19 @@ class Handler {
 
   static validator() {
     return Joi.object({
-      name: Joi.string().required(),
+      supplierId: Joi.string().required(),
+      equipmentId: Joi.string().required(),
+      amount: Joi.number().required(),
     });
   }
 
   transformResponse(response) {
     const { pk, sk, ...data } = response;
 
+    const id = sk.split('#')[3];
+
     const transformed = {
-      id: sk,
+      id,
       ...data,
     };
 
@@ -37,11 +39,11 @@ class Handler {
     return response;
   }
 
-  handlerError(data) {
+  handlerError(error) {
     const response = {
-      statusCode: data.statusCode || 500,
+      statusCode: error.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: "Couldn't create item!"})
+      body: JSON.stringify({error: error.message || "Couldn't create item!"})
     }
 
     return response;
@@ -50,24 +52,20 @@ class Handler {
   async main(event) {
     try {
       const data = event.body;
-
-      const id = generateUniqueId();
+      
+      const { supplierId, equipmentId, ...params } = data;
 
       const item = {
-        pk: 'PRODUCT',
-        sk: id,
-        ...data,
-        product_supplier_pk: `PRODUCT#${id}`,
-        product_supplier_sk: `PRODUCT#${id}`,
-        product_unit_pk: `PRODUCT#${id}`,
-        product_unit_sk: `PRODUCT#${id}`,
-        product_sale_pk: `PRODUCT#${id}`,
-        product_sale_sk: `PRODUCT#${id}`,
+        pk: 'SUPPLIER',
+        sk: `SUPPLIER#${supplierId}#EQUIPMENT#${equipmentId}`,
+        ...params,
+        equipment_supplier_pk: `EQUIPMENT#${equipmentId}`,
+        equipment_supplier_sk: `SUPPLIER#${supplierId}`,
       }
 
-      const product = await this.database.create(item);
+      const equipmentSupplier = await this.database.create(item);
 
-      return this.handlerSuccess(this.transformResponse(product));
+      return this.handlerSuccess(this.transformResponse(equipmentSupplier));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

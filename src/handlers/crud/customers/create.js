@@ -1,8 +1,10 @@
 const Joi = require('joi');
 
-const DatabaseProvider = require('../../providers/database');
-const decoratorValidator = require('../../util/decoratorValidator');
-const globalEnum = require('../../util/globalEnum');
+const generateUniqueId = require('../../../util/id');
+
+const DatabaseProvider = require('../../../providers/database');
+const decoratorValidator = require('../../../util/decoratorValidator');
+const globalEnum = require('../../../util/globalEnum');
 
 class Handler {
   constructor(){
@@ -11,18 +13,15 @@ class Handler {
 
   static validator() {
     return Joi.object({
-      id: Joi.string().required(),
-      name: Joi.string().optional(),
+      name: Joi.string().required(),
     });
   }
 
   transformResponse(response) {
     const { pk, sk, ...data } = response;
 
-    const [_, id] = sk.split('#');
-
     const transformed = {
-      id,
+      id: sk,
       ...data,
     };
 
@@ -42,7 +41,7 @@ class Handler {
     const response = {
       statusCode: data.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: "Couldn't update item!"})
+      body: JSON.stringify({error: "Couldn't create item!"})
     }
 
     return response;
@@ -50,17 +49,23 @@ class Handler {
 
   async main(event) {
     try {
-      const { id, ...data } = event.body;
+      const data = event.body;
 
-      const params = {
-        pk: 'POSITION',
-        sk: `METADATA#${id}`,
+      const id = generateUniqueId();
+
+      const item = {
+        pk: 'CUSTOMER',
+        sk: id,
         ...data,
+        customer_sale_pk: `CUSTOMER#${id}`,
+        customer_sale_sk: `CUSTOMER#${id}`,
+        customer_unit_pk: `CUSTOMER#${id}`,
+        customer_unit_sk: `CUSTOMER#${id}`,
       }
 
-      const position = await this.database.update(params);
+      const customer = await this.database.create(item);
 
-      return this.handlerSuccess(this.transformResponse(position));
+      return this.handlerSuccess(this.transformResponse(customer));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
@@ -68,6 +73,7 @@ class Handler {
     }
   }
 }
+
 
 const handler = new Handler();
 

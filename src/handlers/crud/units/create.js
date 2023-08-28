@@ -1,8 +1,20 @@
-const DatabaseProvider = require('../../providers/database');
+const Joi = require('joi');
+
+const generateUniqueId = require('../../../util/id');
+
+const DatabaseProvider = require('../../../providers/database');
+const decoratorValidator = require('../../../util/decoratorValidator');
+const globalEnum = require('../../../util/globalEnum');
 
 class Handler {
   constructor(){
     this.database = new DatabaseProvider();
+  }
+
+  static validator() {
+    return Joi.object({
+      address: Joi.string().required(),
+    });
   }
 
   transformResponse(response) {
@@ -31,7 +43,7 @@ class Handler {
     const response = {
       statusCode: data.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: "Couldn't read item!"})
+      body: JSON.stringify({error: "Couldn't create item!"})
     }
 
     return response;
@@ -39,14 +51,19 @@ class Handler {
 
   async main(event) {
     try {
-      const { id } = event.pathParameters;
+      const data = event.body;
 
-      const supplier = await this.database.findById({
-        pk: 'SUPPLIER',
+      const id = generateUniqueId();
+
+      const item = {
+        pk: 'UNIT',
         sk: `METADATA#${id}`,
-      });
+        ...data,
+      }
 
-      return this.handlerSuccess(this.transformResponse(supplier));
+      const unit = await this.database.create(item);
+
+      return this.handlerSuccess(this.transformResponse(unit));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
@@ -55,6 +72,11 @@ class Handler {
   }
 }
 
+
 const handler = new Handler();
 
-module.exports = handler.main.bind(handler);
+module.exports = decoratorValidator(
+  handler.main.bind(handler),
+  Handler.validator(),
+  globalEnum.ARG_TYPE.BODY
+);

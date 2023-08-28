@@ -1,10 +1,10 @@
 const Joi = require('joi');
 
-const DatabaseProvider = require('../../providers/database');
-const decoratorValidator = require('../../util/decoratorValidator');
-const globalEnum = require('../../util/globalEnum');
+const DatabaseProvider = require('../../../providers/database');
+const decoratorValidator = require('../../../util/decoratorValidator');
+const globalEnum = require('../../../util/globalEnum');
 
-const { verifyIfExistsInTable } = require('../../providers/database/utils');
+const { verifyIfExistsInTable } = require('../../../providers/database/utils');
 
 class Handler {
   constructor(){

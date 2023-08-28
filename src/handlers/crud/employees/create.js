@@ -1,8 +1,10 @@
 const Joi = require('joi');
 
-const DatabaseProvider = require('../../providers/database');
-const decoratorValidator = require('../../util/decoratorValidator');
-const globalEnum = require('../../util/globalEnum');
+const generateUniqueId = require('../../../util/id');
+
+const DatabaseProvider = require('../../../providers/database');
+const decoratorValidator = require('../../../util/decoratorValidator');
+const globalEnum = require('../../../util/globalEnum');
 
 class Handler {
   constructor(){
@@ -11,9 +13,8 @@ class Handler {
 
   static validator() {
     return Joi.object({
-      supplierId: Joi.string().required(),
-      equipmentId: Joi.string().required(),
-      amount: Joi.number().required(),
+      name: Joi.string().required(),
+      unitId: Joi.string(),
     });
   }
 
@@ -39,11 +40,11 @@ class Handler {
     return response;
   }
 
-  handlerError(error) {
+  handlerError(data) {
     const response = {
-      statusCode: error.statusCode || 500,
+      statusCode: data.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: error.message || "Couldn't create item!"})
+      body: JSON.stringify({error: "Couldn't create item!"})
     }
 
     return response;
@@ -51,21 +52,23 @@ class Handler {
 
   async main(event) {
     try {
-      const data = event.body;
-      
-      const { supplierId, equipmentId, ...params } = data;
+      const { unitId, ...data } = event.body;
+
+      const id = generateUniqueId();
 
       const item = {
-        pk: 'SUPPLIER',
-        sk: `SUPPLIER#${supplierId}#EQUIPMENT#${equipmentId}`,
-        ...params,
-        equipment_supplier_pk: `EQUIPMENT#${equipmentId}`,
-        equipment_supplier_sk: `SUPPLIER#${supplierId}`,
+        pk: 'UNIT',
+        sk: `UNIT#${unitId}#EMPLOYEE#${id}`,
+        ...data,
+        employee_sale_pk: `EMPLOYEE#${id}`,
+        employee_sale_sk: `EMPLOYEE#${id}`,
+        employee_position_pk: `EMPLOYEE#${id}`,
+        employee_position_sk: `EMPLOYEE#${id}`,
       }
 
-      const equipmentSupplier = await this.database.create(item);
+      const employee = await this.database.create(item);
 
-      return this.handlerSuccess(this.transformResponse(equipmentSupplier));
+      return this.handlerSuccess(this.transformResponse(employee));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
