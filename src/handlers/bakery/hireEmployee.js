@@ -1,13 +1,14 @@
 const Joi = require('joi');
 
+const generateUniqueId = require('../../util/id');
+
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor(){
-    this.employeeDatabase = new DatabaseProvider('Employees');
-    this.employeePositionDatabase = new DatabaseProvider('EmployeePosition');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
@@ -62,7 +63,7 @@ class Handler {
       await this.database.create(employee);
 
       await Promise.all(
-        positions.forEach(({ positionId, salary }) => {
+        positions.map(async ({ positionId, salary }) => {
           const position = {
             pk: 'POSITION',
             sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
@@ -76,7 +77,6 @@ class Handler {
           const unitPosition = {
             pk: 'UNIT',
             sk: `UNIT#${unitId}#POSITION#${positionId}`,
-            ...params,
             position_unit_pk: `POSITION#${positionId}`,
             position_unit_sk: `UNIT#${unitId}`,
           }
