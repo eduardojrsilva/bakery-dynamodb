@@ -8,71 +8,48 @@ BakeryTable:
       - AttributeName: sk
         AttributeType: S
 
-      - AttributeName: product_supplier_pk
+      - AttributeName: gsi1_pk
         AttributeType: S
-      - AttributeName: product_supplier_sk
-        AttributeType: S
-
-      - AttributeName: product_unit_pk
-        AttributeType: S
-      - AttributeName: product_unit_sk
+      - AttributeName: gsi1_sk
         AttributeType: S
 
-      - AttributeName: product_sale_pk
+      - AttributeName: gsi2_pk
         AttributeType: S
-      - AttributeName: product_sale_sk
-        AttributeType: S
-
-      - AttributeName: equipment_supplier_pk
-        AttributeType: S
-      - AttributeName: equipment_supplier_sk
+      - AttributeName: gsi2_sk
         AttributeType: S
 
-      - AttributeName: equipment_unit_pk
+      - AttributeName: gsi3_pk
         AttributeType: S
-      - AttributeName: equipment_unit_sk
-        AttributeType: S
-
-      - AttributeName: employee_sale_pk
-        AttributeType: S
-      - AttributeName: employee_sale_sk
+      - AttributeName: gsi3_sk
         AttributeType: S
 
-      - AttributeName: employee_position_pk
+      - AttributeName: gsi4_pk
         AttributeType: S
-      - AttributeName: employee_position_sk
-        AttributeType: S
-
-      - AttributeName: position_unit_pk
-        AttributeType: S
-      - AttributeName: position_unit_sk
+      - AttributeName: gsi4_sk
         AttributeType: S
 
-      - AttributeName: customer_unit_pk
+      - AttributeName: gsi5_pk
         AttributeType: S
-      - AttributeName: customer_unit_sk
-        AttributeType: S
-
-      - AttributeName: unit_sale_pk
-        AttributeType: S
-      - AttributeName: unit_sale_sk
+      - AttributeName: gsi5_sk
         AttributeType: S
 
-      - AttributeName: customer_sale_pk
+      - AttributeName: gsi6_pk
         AttributeType: S
-      - AttributeName: customer_sale_sk
+      - AttributeName: gsi6_sk
         AttributeType: S
+
     KeySchema:
       - AttributeName: pk
         KeyType: HASH
       - AttributeName: sk
         KeyType: RANGE
+
     GlobalSecondaryIndexes:
-      - IndexName: ProductSupplier
+      - IndexName: GSI1
         KeySchema:
-          - AttributeName: product_supplier_pk
+          - AttributeName: gsi1_pk
             KeyType: HASH
-          - AttributeName: product_supplier_sk
+          - AttributeName: gsi1_sk
             KeyType: RANGE
         Projection:
           ProjectionType: 'ALL'
@@ -80,11 +57,11 @@ BakeryTable:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
-      - IndexName: ProductUnit
+      - IndexName: GSI2
         KeySchema:
-          - AttributeName: product_unit_pk
+          - AttributeName: gsi2_pk
             KeyType: HASH
-          - AttributeName: product_unit_sk
+          - AttributeName: gsi2_sk
             KeyType: RANGE
         Projection:
           ProjectionType: 'ALL'
@@ -92,11 +69,11 @@ BakeryTable:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
-      - IndexName: ProductSale
+      - IndexName: GSI3
         KeySchema:
-          - AttributeName: product_sale_pk
+          - AttributeName: gsi3_pk
             KeyType: HASH
-          - AttributeName: product_sale_sk
+          - AttributeName: gsi3_sk
             KeyType: RANGE
         Projection:
           ProjectionType: 'ALL'
@@ -104,11 +81,11 @@ BakeryTable:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
-      - IndexName: EquipmentSupplier
+      - IndexName: GSI4
         KeySchema:
-          - AttributeName: equipment_supplier_pk
+          - AttributeName: gsi4_pk
             KeyType: HASH
-          - AttributeName: equipment_supplier_sk
+          - AttributeName: gsi4_sk
             KeyType: RANGE
         Projection:
           ProjectionType: 'ALL'
@@ -116,11 +93,11 @@ BakeryTable:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
-      - IndexName: EquipmentUnit
+      - IndexName: GSI5
         KeySchema:
-          - AttributeName: equipment_unit_pk
+          - AttributeName: gsi5_pk
             KeyType: HASH
-          - AttributeName: equipment_unit_sk
+          - AttributeName: gsi5_sk
             KeyType: RANGE
         Projection:
           ProjectionType: 'ALL'
@@ -128,77 +105,18 @@ BakeryTable:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
 
-      - IndexName: EmployeeSale
+      - IndexName: GSI6
         KeySchema:
-          - AttributeName: employee_sale_pk
+          - AttributeName: gsi6_pk
             KeyType: HASH
-          - AttributeName: employee_sale_sk
+          - AttributeName: gsi6_sk
             KeyType: RANGE
         Projection:
           ProjectionType: 'ALL'
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-
-      - IndexName: EmployeePosition
-        KeySchema:
-          - AttributeName: employee_position_pk
-            KeyType: HASH
-          - AttributeName: employee_position_sk
-            KeyType: RANGE
-        Projection:
-          ProjectionType: 'ALL'
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-
-      - IndexName: PositionUnit
-        KeySchema:
-          - AttributeName: position_unit_pk
-            KeyType: HASH
-          - AttributeName: position_unit_sk
-            KeyType: RANGE
-        Projection:
-          ProjectionType: 'ALL'
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-
-      - IndexName: CustomerUnit
-        KeySchema:
-          - AttributeName: customer_unit_pk
-            KeyType: HASH
-          - AttributeName: customer_unit_sk
-            KeyType: RANGE
-        Projection:
-          ProjectionType: 'ALL'
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-
-      - IndexName: UnitSale
-        KeySchema:
-          - AttributeName: unit_sale_pk
-            KeyType: HASH
-          - AttributeName: unit_sale_sk
-            KeyType: RANGE
-        Projection:
-          ProjectionType: 'ALL'
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-
-      - IndexName: CustomerSale
-        KeySchema:
-          - AttributeName: customer_sale_pk
-            KeyType: HASH
-          - AttributeName: customer_sale_sk
-            KeyType: RANGE
-        Projection:
-          ProjectionType: 'ALL'
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+      
     ProvisionedThroughput:
       ReadCapacityUnits: 1
       WriteCapacityUnits: 1
