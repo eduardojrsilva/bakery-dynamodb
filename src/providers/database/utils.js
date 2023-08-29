@@ -1,31 +1,19 @@
-const AWS = require('aws-sdk');
+function normalizeResponse(item) {
+  const allKeys = Object.keys(item);
 
-const FIRST_ITEM_INDEX = 0;
-const SECOND_ITEM_INDEX = 1;
+  const filteredKeys = allKeys.filter((key) => {
+    const isPrimaryKey = ['_pk', '_sk'].some((suffix) => key.endsWith(suffix));
+    const isActiveFlag = key === 'active';
 
-function removeActiveProperty(item) {
-  const { active, ...props } = item;
+    return !isPrimaryKey && !isActiveFlag;
+  });
 
-  return { ...props };
+  const filteredObject = filteredKeys.reduce((acc, key) => ({
+    ...acc,
+    [key]: item[key]
+  }), {});
+
+  return filteredObject;
 }
 
-async function writePutTransaction(transactionsItems) {
-  const dynamoDB = new AWS.DynamoDB.DocumentClient();
-
-  const TransactItems = transactionsItems.map(({ item, tableName }) => ({
-    Put: {
-      Item: {
-        ...item,
-        createdAt: new Date().toISOString(),
-        active: true,
-      },
-      TableName: tableName
-    }
-  }));
-
-  await dynamoDB.transactWrite({
-    TransactItems
-  }).promise();
-}
-
-module.exports = { removeActiveProperty, writePutTransaction };
+module.exports = { normalizeResponse };
