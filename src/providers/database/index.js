@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 
-const { removeActiveProperty } = require('./utils');
+const { normalizeResponse } = require('./utils');
 
 class DatabaseProvider {
   constructor() {
@@ -18,7 +18,7 @@ class DatabaseProvider {
     
     await this.dynamoDB.put(params).promise();
 
-    const item = removeActiveProperty(params.Item);
+    const item = normalizeResponse(params.Item);
   
     return item;
   }
@@ -35,7 +35,7 @@ class DatabaseProvider {
 
     if (!Item || !Item.active) throw new Error('Item not found');
 
-    const item = removeActiveProperty(Item);
+    const item = normalizeResponse(Item);
 
     return item;
   }
@@ -63,7 +63,7 @@ class DatabaseProvider {
 
     const { Items } = await this.dynamoDB.query(params).promise();
 
-    const activeItems = Items.filter(({ active }) => active).map(removeActiveProperty);
+    const activeItems = Items.filter(({ active }) => active).map(normalizeResponse);
 
     return activeItems;
   }
@@ -100,7 +100,7 @@ class DatabaseProvider {
   
     const { Attributes } = await this.dynamoDB.update(params).promise();
 
-    const updated = removeActiveProperty(Attributes);
+    const updated = normalizeResponse(Attributes);
 
     return updated;
   }
@@ -123,7 +123,7 @@ class DatabaseProvider {
   
     const { Attributes } = await this.dynamoDB.update(params).promise();
 
-    const removed = removeActiveProperty(Attributes);
+    const removed = normalizeResponse(Attributes);
 
     return removed;
   }
