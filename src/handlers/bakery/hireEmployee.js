@@ -47,41 +47,52 @@ class Handler {
       const data = event.body;
 
       const { unitId, employeeName, positions } = data;
+
+      const transactionData = [];
       
       const employeeId = generateUniqueId();
 
       const employee = {
         pk: 'UNIT',
         sk: `UNIT#${unitId}#EMPLOYEE#${employeeId}`,
+        id: employeeId,
         name: employeeName,
         gsi3_pk: `EMPLOYEE#${employeeId}`,
         gsi3_sk: `EMPLOYEE#${employeeId}`,
       }
 
-      await this.database.create(employee);
+      transactionData.push({ operation: 'Put', Item: employee });
 
-      await Promise.all(
-        positions.map(async ({ positionId, salary }) => {
-          const position = {
-            pk: 'POSITION',
-            sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
-            salary,
-            gsi3_pk: `EMPLOYEE#${employeeId}`,
-            gsi3_sk: `POSITION#${positionId}`,
-          }
-    
-          await this.database.create(position);
+      positions.map(async ({ positionId, salary }) => {
+        const position = {
+          pk: 'POSITION',
+          sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
+          positionId,
+          employeeId,
+          salary,
+          gsi3_pk: `EMPLOYEE#${employeeId}`,
+          gsi3_sk: `POSITION#${positionId}`,
+        }
+  
+        transactionData.push({ operation: 'Put', Item: position });
 
-          const unitPosition = {
-            pk: 'UNIT',
-            sk: `UNIT#${unitId}#POSITION#${positionId}`,
-            gsi4_pk: `POSITION#${positionId}`,
-            gsi4_sk: `UNIT#${unitId}`,
-          }
-    
-          await this.database.create(unitPosition);
-        })
-      )
+        const unitPosition = {
+          pk: 'UNIT',
+          sk: `UNIT#${unitId}#POSITION#${positionId}`,
+          unitId,
+          positionId,
+          gsi4_pk: `POSITION#${positionId}`,
+          gsi4_sk: `UNIT#${unitId}`,
+        }
+  
+        transactionData.push({
+          operation: 'Put',
+          Item: unitPosition,
+          ConditionExpression: 'attribute_not_exists(sk)',
+        });
+      });
+
+      await this.database.transact(transactionData);
 
       return this.handlerSuccess();
     } catch (error) {
