@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
 
-const { normalizeResponse } = require('./utils');
+const { normalizeResponse, getTransactionAttributes } = require('./utils');
 
 class DatabaseProvider {
   constructor() {
@@ -126,6 +126,20 @@ class DatabaseProvider {
     const removed = normalizeResponse(Attributes);
 
     return removed;
+  }
+
+  async transact(transactionsItems) {
+    const TransactItems = transactionsItems.map(({ operation, ...attributes }) => {
+      return {
+        [operation]: {
+          ...attributes,
+        }
+      }
+    });
+
+    await this.dynamoDB.transactWrite({
+      TransactItems
+    }).promise();
   }
 }
 
