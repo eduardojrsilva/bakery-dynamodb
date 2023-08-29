@@ -39,19 +39,19 @@ class Handler {
 
   async main(event) {
     try {
-      const data = event.body;
+      const { unitId, supplierId } = event.body;
 
-      const unitExists = await verifyIfExistsInTable('Units', data.unitId);
+      const unitExists = await verifyIfExistsInTable('Units', unitId);
 
       if (!unitExists) return this.handlerError({ statusCode: 400, message: 'Unit not found' });
       
-      const supplierExists = await verifyIfExistsInTable('Suppliers', data.supplierId);
+      const supplierExists = await verifyIfExistsInTable('Suppliers', supplierId);
       
       if (!supplierExists) return this.handlerError({ statusCode: 400, message: 'Supplier not found' });
 
-      const id = `${data.unitId}#${data.supplierId}`;
+      const id = `${unitId}#${supplierId}`;
 
-      const unitSupplier = await this.database.create({ id });
+      const unitSupplier = await this.database.create({ id, unitId, supplierId });
 
       return this.handlerSuccess(unitSupplier);
     } catch (error) {

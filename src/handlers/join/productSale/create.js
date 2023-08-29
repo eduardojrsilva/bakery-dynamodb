@@ -58,11 +58,13 @@ class Handler {
       const { productId, saleId, ...params } = data;
       
       const item = {
+        saleId,
+        productId,
         pk: 'SALE',
         sk: `SALE#${saleId}#PRODUCT#${productId}`,
         ...params,
-        product_sale_pk: `PRODUCT#${productId}`,
-        product_sale_sk: `SALE#${saleId}`,
+        gsi1_pk: `PRODUCT#${productId}`,
+        gsi1_sk: `SALE#${saleId}`,
       }
 
       const productSale = await this.database.create(item);

@@ -57,13 +57,12 @@ class Handler {
       const id = generateUniqueId();
 
       const item = {
+        id,
         pk: 'UNIT',
         sk: `UNIT#${unitId}#EMPLOYEE#${id}`,
         ...data,
-        employee_sale_pk: `EMPLOYEE#${id}`,
-        employee_sale_sk: `EMPLOYEE#${id}`,
-        employee_position_pk: `EMPLOYEE#${id}`,
-        employee_position_sk: `EMPLOYEE#${id}`,
+        gsi3_pk: `EMPLOYEE#${id}`,
+        gsi3_sk: `EMPLOYEE#${id}`,
       }
 
       const employee = await this.database.create(item);

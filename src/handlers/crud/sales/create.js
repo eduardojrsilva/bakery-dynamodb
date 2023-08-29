@@ -76,33 +76,41 @@ class Handler {
       const id = generateUniqueId();
 
       const item = {
+        id,
+        unitId,
+        customerId,
+        employeeId,
         pk: 'SALE',
         sk: `METADATA#${id}`,
         ...params,
-        unit_sale_pk: `UNIT#${unitId}`,
-        unit_sale_sk: `SALE#${id}`,
-        customer_sale_pk: `CUSTOMER#${customerId}`,
-        customer_sale_sk: `SALE#${id}`,
-        employee_sale_pk: `EMPLOYEE#${employeeId}`,
-        employee_sale_sk: `SALE#${id}`,
+        gsi6_pk: `UNIT#${unitId}`,
+        gsi6_sk: `SALE#${id}`,
+        gsi5_pk: `CUSTOMER#${customerId}`,
+        gsi5_sk: `SALE#${id}`,
+        gsi3_pk: `EMPLOYEE#${employeeId}`,
+        gsi3_sk: `SALE#${id}`,
       }
 
       const sale = await this.database.create(item);
       
       const unitSale = {
+        unitId,
+        saleId: id,
         pk: 'UNIT',
         sk: `UNIT#${unitId}#SALE#${id}`,
-        unit_sale_pk: `UNIT#${unitId}`,
-        unit_sale_sk: `UNIT#${unitId}`,
+        gsi6_pk: `UNIT#${unitId}`,
+        gsi6_sk: `UNIT#${unitId}`,
       }
 
       await this.database.create(unitSale);
 
       const unitCustomer = {
+        unitId,
+        customerId,
         pk: 'UNIT',
         sk: `UNIT#${unitId}#CUSTOMER#${customerId}`,
-        customer_unit_pk: `CUSTOMER#${customerId}`,
-        customer_unit_sk: `UNIT#${unitId}`,
+        gsi5_pk: `CUSTOMER#${customerId}`,
+        gsi5_sk: `UNIT#${unitId}`,
       }
 
       await this.database.create(unitCustomer);
