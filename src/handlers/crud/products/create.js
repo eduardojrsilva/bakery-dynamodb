@@ -54,15 +54,12 @@ class Handler {
       const id = generateUniqueId();
 
       const item = {
+        id,
         pk: 'PRODUCT',
         sk: id,
         ...data,
-        product_supplier_pk: `PRODUCT#${id}`,
-        product_supplier_sk: `PRODUCT#${id}`,
-        product_unit_pk: `PRODUCT#${id}`,
-        product_unit_sk: `PRODUCT#${id}`,
-        product_sale_pk: `PRODUCT#${id}`,
-        product_sale_sk: `PRODUCT#${id}`,
+        gsi1_pk: `PRODUCT#${id}`,
+        gsi1_sk: `PRODUCT#${id}`,
       }
 
       const product = await this.database.create(item);

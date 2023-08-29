@@ -54,10 +54,8 @@ class Handler {
         pk: 'UNIT',
         sk: `UNIT#${unitId}#EMPLOYEE#${employeeId}`,
         name: employeeName,
-        employee_sale_pk: `EMPLOYEE#${employeeId}`,
-        employee_sale_sk: `EMPLOYEE#${employeeId}`,
-        employee_position_pk: `EMPLOYEE#${employeeId}`,
-        employee_position_sk: `EMPLOYEE#${employeeId}`,
+        gsi3_pk: `EMPLOYEE#${employeeId}`,
+        gsi3_sk: `EMPLOYEE#${employeeId}`,
       }
 
       await this.database.create(employee);
@@ -68,8 +66,8 @@ class Handler {
             pk: 'POSITION',
             sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
             salary,
-            employee_position_pk: `EMPLOYEE#${employeeId}`,
-            employee_position_sk: `POSITION#${positionId}`,
+            gsi3_pk: `EMPLOYEE#${employeeId}`,
+            gsi3_sk: `POSITION#${positionId}`,
           }
     
           await this.database.create(position);
@@ -77,8 +75,8 @@ class Handler {
           const unitPosition = {
             pk: 'UNIT',
             sk: `UNIT#${unitId}#POSITION#${positionId}`,
-            position_unit_pk: `POSITION#${positionId}`,
-            position_unit_sk: `UNIT#${unitId}`,
+            gsi4_pk: `POSITION#${positionId}`,
+            gsi4_sk: `UNIT#${unitId}`,
           }
     
           await this.database.create(unitPosition);

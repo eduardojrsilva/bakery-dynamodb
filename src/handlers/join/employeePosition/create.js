@@ -57,26 +57,30 @@ class Handler {
       const { employeeId, positionId, unitId, ...params } = data;
       
       const item = {
+        employeeId,
+        positionId,
         pk: 'POSITION',
         sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
         ...params,
-        employee_position_pk: `EMPLOYEE#${employeeId}`,
-        employee_position_sk: `POSITION#${positionId}`,
+        gsi3_pk: `EMPLOYEE#${employeeId}`,
+        gsi3_sk: `POSITION#${positionId}`,
       }
 
-      const EmployeePosition = await this.database.create(item);
+      const employeePosition = await this.database.create(item);
 
       const unitPosition = {
+        unitId,
+        positionId,
         pk: 'UNIT',
         sk: `UNIT#${unitId}#POSITION#${positionId}`,
         ...params,
-        position_unit_pk: `POSITION#${positionId}`,
-        position_unit_sk: `UNIT#${unitId}`,
+        gsi4_pk: `POSITION#${positionId}`,
+        gsi4_sk: `UNIT#${unitId}`,
       }
 
       await this.database.create(unitPosition);
 
-      return this.handlerSuccess(this.transformResponse(EmployeePosition));
+      return this.handlerSuccess(this.transformResponse(employeePosition));
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

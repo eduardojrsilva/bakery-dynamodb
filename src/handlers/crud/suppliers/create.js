@@ -57,6 +57,7 @@ class Handler {
       const id = generateUniqueId();
 
       const item = {
+        id,
         pk: 'SUPPLIER',
         sk: `METADATA#${id}`,
         ...data,
