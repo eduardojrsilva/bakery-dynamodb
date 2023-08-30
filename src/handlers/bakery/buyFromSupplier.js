@@ -1,16 +1,12 @@
 const Joi = require('joi');
 
 const DatabaseProvider = require('../../providers/database');
-const { getRelations, verifyIfExistsInList, writePutTransaction } = require('../../providers/database/utils');
-
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 
 class Handler {
   constructor() {
-    this.unitProductDatabase = new DatabaseProvider('UnitProduct');
-    this.unitEquipmentDatabase = new DatabaseProvider('UnitEquipment');
-    this.equipmentDatabase = new DatabaseProvider('Equipment');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
@@ -20,14 +16,14 @@ class Handler {
       products: Joi.array().items(
         Joi.object({
           productId: Joi.string().required(),
-          amount: Joi.number().integer().max(500).required().messages({ "number.max": "Maximum of 500 products in purchases at the supplier" }),
+          amount: Joi.number().integer().required(),
           resalePrice: Joi.number().required(),
         }),
       ).optional(),
       equipments: Joi.array().items(
         Joi.object({
           equipmentId: Joi.string().required(),
-          amount: Joi.number().integer().max(20).required().messages({ "number.max": "Maximum of 20 equipment in purchases at the supplier" }),
+          amount: Joi.number().integer().required(),
         }),
       ).optional(),
     });
@@ -57,93 +53,134 @@ class Handler {
       const data = event.body;
 
       const { unitId, supplierId, products, equipments } = data;
-      
-      const unitSuppliers = await getRelations({ joinTable: 'UnitSupplier', itemId: unitId });
-
-      const supplierRegistered = verifyIfExistsInList(unitSuppliers, supplierId);
-
-      if (!supplierRegistered)
-        return this.handlerError({ statusCode: 400, message: 'Supplier not registered in the unit' });
 
       if (!products?.length && !equipments?.length)
         return this.handlerError({ statusCode: 400, message: 'You must purchase at least one item' });
 
-      const transactItems = [];
-      let productsTotalPrice;
-      let equipmentsTotalPrice;
-
+        let productsTotalPrice;
+        let equipmentsTotalPrice;
+        const transactionData = [];
+        
       if (products) {
-        const supplierProducts = await getRelations({ joinTable: 'SupplierProduct', itemId: supplierId });
+        const supplierProducts = await this.database.findAll({
+          pk: 'SUPPLIER',
+          sk: `SUPPLIER#${supplierId}#PRODUCT`
+        });
 
-        const nonExistentProduct = supplierProducts.some(({ id }) => !products.some(({ productId }) => productId === id));
+        const nonExistentProduct = supplierProducts.some(({ productId: id }) => !products.some(({ productId }) => productId === id));
 
         if (nonExistentProduct || !supplierProducts.length)
           return this.handlerError({ statusCode: 400, message: 'The supplier does not have any of the requested products' });
 
-        const pricesById = supplierProducts.reduce((acc, { id, price }) => {
-          const productRequested = products.find(({ productId }) => productId === id);
-
-          if (!productRequested) return acc;
-
-          return {
-            ...acc,
-            [id]: price,
-          }
-        }, {});
+        const productDataById = supplierProducts.reduce((acc, { productId, name, price, stock }) => ({
+          ...acc,
+          [productId]: { name, price, stock },
+        }), {});
 
         productsTotalPrice = products.reduce((acc, { productId, amount }) => {
-          return acc + pricesById[productId] * amount;
+          return acc + productDataById[productId].price * amount;
         }, 0);
 
-        products.forEach(({ productId, resalePrice }) => {
-          const item = {
-            id: `${unitId}#${productId}`,
-            price: resalePrice,
+        products.forEach(({ productId, resalePrice, amount }) => {
+          const productKey = {
+            pk: 'UNIT',
+            sk: `UNIT#${unitId}#PRODUCT#${productId}`,
           }
 
-          const tableName = 'UnitProduct';
+          const alreadyExistentProduct = await this.database.findById(productKey);
+          
+          if (alreadyExistentProduct) {
+            const { stock } = alreadyExistentProduct;
 
-          transactItems.push({ item, tableName });
+            const newStock = stock + amount;
+            
+            transactionData.push({
+              operation: 'Update',
+              Key: productKey,
+              UpdateExpression: 'SET stock = :newStock',
+              ExpressionAttributeValues: {
+                ':newStock': newStock,
+              },
+            });
+          } else {
+            const { name } = productDataById[productId];
+
+            const unitProduct = {
+              ...productKey,
+              unitId,
+              productId,
+              name,
+              stock: amount,
+              price: resalePrice,
+              gsi1_pk: `PRODUCT#${productId}`,
+              gsi1_sk: `UNIT#${unitId}`,
+            }
+
+            transactionData.push({ operation: 'Put', Item: unitProduct });
+          }
         });
       }
 
       if (equipments) {
-        const supplierEquipments = await getRelations({ joinTable: 'SupplierEquipment', itemId: supplierId });
+        const supplierEquipments = await this.database.findAll({
+          pk: 'SUPPLIER',
+          sk: `SUPPLIER#${supplierId}#EQUIPMENT`
+        });
 
-        const nonExistentEquipment = supplierEquipments.some(({ id }) => !equipments.some(({ equipmentId }) => equipmentId === id));
+        const nonExistentEquipment = supplierEquipments.some(({ equipmentId: id }) => !equipments.some(({ equipmentId }) => equipmentId === id));
 
         if (nonExistentEquipment || !supplierEquipments.length)
           return this.handlerError({ statusCode: 400, message: 'The supplier does not have any of the requested equipments' });
 
-        const allEquipments = await this.equipmentDatabase.findAll();
-
-        const pricesById = allEquipments.reduce((acc, { id, price }) => {
-          const equipmentRequested = equipments.find(({ equipmentId }) => equipmentId === id);
-
-          if (!equipmentRequested) return acc;
-
-          return {
-            ...acc,
-            [id]: price,
-          }
-        }, {});
+        const equipmentDataById = supplierEquipments.reduce((acc, { equipmentId, name, price, stock }) => ({
+          ...acc,
+          [equipmentId]: { name, price, stock },
+        }), {});
 
         equipmentsTotalPrice = equipments.reduce((acc, { equipmentId, amount }) => {
-          return acc + pricesById[equipmentId] * amount;
+          return acc + equipmentDataById[equipmentId].price * amount;
         }, 0);
 
-        equipments.forEach(({ equipmentId }) => {
-          const item = {
-            id: `${unitId}#${equipmentId}`,
-          };
+        equipments.forEach(({ equipmentId, amount }) => {
+          const equipmentKey = {
+            pk: 'UNIT',
+            sk: `UNIT#${unitId}#EQUIPMENT#${equipmentId}`,
+          }
 
-          const tableName = 'UnitEquipment';
+          const alreadyExistentEquipment = await this.database.findById(equipmentKey);
           
-          transactItems.push({ item, tableName });
+          if (alreadyExistentEquipment) {
+            const { stock } = alreadyExistentEquipment;
+
+            const newStock = stock + amount;
+            
+            transactionData.push({
+              operation: 'Update',
+              Key: equipmentKey,
+              UpdateExpression: 'SET stock = :newStock',
+              ExpressionAttributeValues: {
+                ':newStock': newStock,
+              },
+            });
+          } else {
+            const { name } = equipmentDataById[equipmentId];
+
+            const unitEquipment = {
+              ...equipmentKey,
+              unitId,
+              equipmentId,
+              name,
+              stock: amount,
+              gsi2_pk: `EQUIPMENT#${equipmentId}`,
+              gsi2_sk: `UNIT#${unitId}`,
+            }
+
+            transactionData.push({ operation: 'Put', Item: unitEquipment });
+          }
         });
       }
 
-      await writePutTransaction(transactItems);
+      await this.database.transact(transactionData);
 
       return this.handlerSuccess({ productsTotalPrice, equipmentsTotalPrice });
     } catch (error) {
