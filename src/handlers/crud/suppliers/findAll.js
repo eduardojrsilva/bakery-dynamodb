@@ -5,19 +5,6 @@ class Handler {
     this.database = new DatabaseProvider();
   }
 
-  transformResponse(response) {
-    const { pk, sk, ...data } = response;
-
-    const [_, id] = sk.split('#');
-
-    const transformed = {
-      id,
-      ...data,
-    };
-
-    return transformed;
-  }
-
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -44,7 +31,7 @@ class Handler {
         sk: 'METADATA'
       });
 
-      return this.handlerSuccess(suppliers.map(this.transformResponse));
+      return this.handlerSuccess(suppliers);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
