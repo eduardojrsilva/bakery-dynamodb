@@ -33,7 +33,7 @@ class DatabaseProvider {
   
     const { Item } = await this.dynamoDB.get(params).promise();
 
-    if (!Item || !Item.active) throw new Error('Item not found');
+    if (!Item || !Item.active) return undefined;
 
     const item = normalizeResponse(Item);
 
