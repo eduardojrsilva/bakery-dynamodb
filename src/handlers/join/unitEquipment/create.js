@@ -13,7 +13,7 @@ class Handler {
     return Joi.object({
       unitId: Joi.string().required(),
       equipmentId: Joi.string().required(),
-      amount: Joi.number().required(),
+      stock: Joi.number().required(),
     });
   }
 
