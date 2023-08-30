@@ -14,7 +14,7 @@ class Handler {
       unitId: Joi.string().required(),
       productId: Joi.string().required(),
       price: Joi.number().required(),
-      amount: Joi.number().required(),
+      stock: Joi.number().required(),
     });
   }
 
