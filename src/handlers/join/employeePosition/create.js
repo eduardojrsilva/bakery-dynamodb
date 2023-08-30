@@ -18,19 +18,6 @@ class Handler {
     });
   }
 
-  transformResponse(response) {
-    const { pk, sk, employee_position_pk, employee_position_sk, ...data } = response;
-
-    const id = sk.split('#')[3];
-
-    const transformed = {
-      id,
-      ...data,
-    };
-
-    return transformed;
-  }
-
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -59,6 +46,7 @@ class Handler {
       const item = {
         employeeId,
         positionId,
+        unitId,
         pk: 'POSITION',
         sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,
         ...params,
@@ -80,7 +68,7 @@ class Handler {
 
       await this.database.create(unitPosition);
 
-      return this.handlerSuccess(this.transformResponse(employeePosition));
+      return this.handlerSuccess(employeePosition);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

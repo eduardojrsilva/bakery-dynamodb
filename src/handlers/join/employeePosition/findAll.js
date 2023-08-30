@@ -2,20 +2,7 @@ const DatabaseProvider = require('../../../providers/database');
 
 class Handler {
   constructor(){
-    this.database = new DatabaseProvider('EmployeePosition');
-  }
-
-  transformResponse(response) {
-    const { pk, sk, employee_position_pk, employee_position_sk, ...data } = response;
-
-    const id = sk.split('#')[3];
-
-    const transformed = {
-      id,
-      ...data,
-    };
-
-    return transformed;
+    this.database = new DatabaseProvider();
   }
 
   handlerSuccess(data) {
@@ -46,7 +33,7 @@ class Handler {
         sk: `POSITION#${positionId}#EMPLOYEE`
       });
 
-      return this.handlerSuccess(employeePosition.map(this.transformResponse));
+      return this.handlerSuccess(employeePosition);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
