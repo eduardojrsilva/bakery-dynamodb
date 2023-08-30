@@ -5,17 +5,6 @@ class Handler {
     this.database = new DatabaseProvider();
   }
 
-  transformResponse(response) {
-    const { pk, sk, ...data } = response;
-
-    const transformed = {
-      id: sk,
-      ...data,
-    };
-
-    return transformed;
-  }
-
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -41,7 +30,7 @@ class Handler {
         pk: 'CUSTOMER',
       });
 
-      return this.handlerSuccess(customers.map(this.transformResponse));
+      return this.handlerSuccess(customers);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
