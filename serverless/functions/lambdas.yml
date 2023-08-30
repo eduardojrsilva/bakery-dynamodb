@@ -257,7 +257,7 @@ customers-delete:
         path: /customers/{id}
         method: delete
 
-# CUSTOMERS
+# SALES
 
 sales-create:
   handler: src/handlers/index.salesCreate
