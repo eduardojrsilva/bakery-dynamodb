@@ -5,35 +5,6 @@ class Handler {
     this.database = new DatabaseProvider();
   }
 
-  transformResponse(response) {
-    const {
-      pk,
-      sk,
-      unit_sale_pk,
-      unit_sale_sk,
-      customer_sale_pk,
-      customer_sale_sk,
-      employee_sale_pk,
-      employee_sale_sk,
-      ...data
-    } = response;
-
-    const [_sale, id] = sk.split('#');
-    const [_unit, unit] = unit_sale_pk.split('#');
-    const [_employee, employee] = employee_sale_pk.split('#');
-    const [_customer, customer] = customer_sale_pk.split('#');
-
-    const transformed = {
-      id,
-      ...data,
-      unit,
-      employee,
-      customer,
-    };
-
-    return transformed;
-  }
-
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -62,7 +33,7 @@ class Handler {
         sk: `METADATA#${id}`,
       });
 
-      return this.handlerSuccess(this.transformResponse(sale));
+      return this.handlerSuccess(sale);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
