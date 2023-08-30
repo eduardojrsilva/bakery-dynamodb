@@ -9,19 +9,6 @@ class Handler {
     this.database = new DatabaseProvider();
   }
 
-  transformResponse(response) {
-    const { pk, sk, ...data } = response;
-
-    const id = sk.split('#')[3];
-
-    const transformed = {
-      id,
-      ...data,
-    };
-
-    return transformed;
-  }
-
   static validator() {
     return Joi.object({
       id: Joi.string().required(),
@@ -61,7 +48,7 @@ class Handler {
 
       const employee = await this.database.update(params);
 
-      return this.handlerSuccess(this.transformResponse(employee));
+      return this.handlerSuccess(employee);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

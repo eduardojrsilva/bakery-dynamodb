@@ -5,19 +5,6 @@ class Handler {
     this.database = new DatabaseProvider();
   }
 
-  transformResponse(response) {
-    const { pk, sk, ...data } = response;
-
-    const id = sk.split('#')[3];
-
-    const transformed = {
-      id,
-      ...data,
-    };
-
-    return transformed;
-  }
-
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -46,7 +33,7 @@ class Handler {
         sk: `UNIT#${unitId}#EMPLOYEE#${id}`,
       });
 
-      return this.handlerSuccess(this.transformResponse(employee));
+      return this.handlerSuccess(employee);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
