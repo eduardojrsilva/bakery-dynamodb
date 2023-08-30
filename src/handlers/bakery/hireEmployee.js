@@ -36,7 +36,7 @@ class Handler {
     const response = {
       statusCode: error.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: error.message || "Couldn't create item!"})
+      body: JSON.stringify({error: error.message || "Error when hire employee!"})
     }
 
     return response;
