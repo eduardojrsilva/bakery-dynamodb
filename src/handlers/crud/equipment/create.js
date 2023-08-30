@@ -19,17 +19,6 @@ class Handler {
     });
   }
 
-  transformResponse(response) {
-    const { pk, sk, ...data } = response;
-
-    const transformed = {
-      id: sk,
-      ...data,
-    };
-
-    return transformed;
-  }
-
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -66,7 +55,7 @@ class Handler {
 
       const equipment = await this.database.create(item);
 
-      return this.handlerSuccess(this.transformResponse(equipment));
+      return this.handlerSuccess(equipment);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
