@@ -3,22 +3,22 @@ const Joi = require('joi');
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
+const generateUniqueId = require('../../util/id');
 
 class Handler {
   constructor(){
-    this.unitProductDatabase = new DatabaseProvider('UnitProduct');
-    this.salesDatabase = new DatabaseProvider('Sales');
-    this.productSaleDatabase = new DatabaseProvider('ProductSale');
+    this.database = new DatabaseProvider();
   }
 
   static validator() {
     return Joi.object({
+      unitId: Joi.string(),
       customerId: Joi.string(),
       sellerId: Joi.string(),
       products: Joi.array().items(
         Joi.object({
           productId: Joi.string(),
-          amount: Joi.number().integer().max(30).required().messages({ "number.max": "Maximum of 30 products per sale" }),
+          amount: Joi.number().integer().required(),
         })
       ),
     });
@@ -37,7 +37,7 @@ class Handler {
     const response = {
       statusCode: error.statusCode || 500,
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: error.message || "Couldn't create item!"})
+      body: JSON.stringify({error: error.message || "Error when finish sale"})
     }
 
     return response;
@@ -47,39 +47,84 @@ class Handler {
     try {
       const data = event.body;
 
-      const { customerId, sellerId, products } = data;
+      const { unitId, customerId, sellerId, products } = data;
 
-      const productsIds = products.map(({productId}) => productId);
+      const saleId = generateUniqueId();
+      
+      let totalPrice = 0;
+      const transactionData = [];
 
-      const allUnitProducts = await this.unitProductDatabase.findAll();
-      const productsInfo = allUnitProducts.filter(({ id }) => {
-        const [_, idProd] = id.split('#');
-        return productsIds.some((productId) => idProd === productId );
+      const unitProducts = await this.database.findAll({
+        pk: 'UNIT',
+        sk: `UNIT#${unitId}#PRODUCT`
       });
 
-      const pricesById = productsInfo.reduce((acc, { id, price }) => {
-        const [_, productId] = id.split('#');
-        return {
-          ...acc,
-          [productId]: price,
-        };
-      }, {});
+      const productDataById = unitProducts.reduce((acc, { productId, name, price, stock }) => ({
+        ...acc,
+        [productId]: { name, price, stock },
+      }), {});
 
-      const totalPrice = products.reduce((acc, { productId, amount }) => {
-        return acc + pricesById[productId] * amount;
-      }, 0);
+      products.map(({ productId, amount }) => {
+        const productData = productDataById[productId];
 
-      const sale = await this.salesDatabase.create({ customerId, sellerId });
+        if (!productData || amount > productData.stock) {
+          return this.handlerError({
+            statusCode: 400,
+            message: 'Our stock does not meet one of the orders'
+          });
+        }
 
-      await Promise.all(products.map(async (product) => {
-        await this.productSaleDatabase.create({
-          id: `${product.productId}#${sale.id}`,
-          saleId: sale.id,
-          ...product 
+        const { name, price, stock } = productData;
+
+        const newStock = stock - amount;
+            
+        transactionData.push({
+          operation: 'Update',
+          Key: {
+            pk: 'UNIT',
+            sk: `UNIT#${unitId}#PRODUCT#${productId}`,
+          },
+          UpdateExpression: 'SET stock = :newStock',
+          ExpressionAttributeValues: {
+            ':newStock': newStock,
+          },
         });
-      }));
+
+        const saleProduct = {
+          pk: 'SALE',
+          sk: `SALE#${saleId}#PRODUCT#${productId}`,
+          saleId,
+          productId,
+          name,
+          amount,
+          unitSalePrice: price,
+          gsi1_pk: `PRODUCT#${productId}`,
+          gsi1_sk: `SALE#${saleId}`,
+        };
+
+        totalPrice += (price * amount);
+  
+        transactionData.push({ operation: 'Put', Item: saleProduct });
+      });
+      
+      const sale = {
+        pk: 'SALE',
+        sk: `METADATA#${saleId}`,
+        saleId,
+        totalPrice,
+        gsi3_pk: `EMPLOYEE#${sellerId}`,
+        gsi3_sk: `SALE#${saleId}`,
+        gsi5_pk: `CUSTOMER#${customerId}`,
+        gsi5_sk: `SALE#${saleId}`,
+        gsi6_pk: `UNIT#${unitId}`,
+        gsi6_sk: `SALE#${saleId}`,
+      };
+
+      transactionData.push({ operation: 'Put', Item: sale });
+      
+      await this.database.transact(transactionData);
     
-      return this.handlerSuccess(totalPrice);
+      return this.handlerSuccess({ totalPrice });
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
