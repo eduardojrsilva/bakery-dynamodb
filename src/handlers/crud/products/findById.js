@@ -5,17 +5,6 @@ class Handler {
     this.database = new DatabaseProvider();
   }
 
-  transformResponse(response) {
-    const { pk, sk, ...data } = response;
-
-    const transformed = {
-      id: sk,
-      ...data,
-    };
-
-    return transformed;
-  }
-
   handlerSuccess(data) {
     const response = {
       statusCode: 200,
@@ -39,9 +28,12 @@ class Handler {
     try {
       const { id } = event.pathParameters;
 
-      const product = await this.database.findById('PRODUCT', id);
+      const product = await this.database.findById({
+        pk: 'PRODUCT',
+        sk: id,
+      });
 
-      return this.handlerSuccess(this.transformResponse(product));
+      return this.handlerSuccess(product);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
