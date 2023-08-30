@@ -1,11 +1,11 @@
 const Joi = require('joi');
 
-const generateUniqueId = require('../../util/id');
+const generateUniqueId = require('../../../util/id');
 
-const DatabaseProvider = require('../../providers/database');
-const { verifyIfExistsInTable } = require('../../providers/database/utils');
-const decoratorValidator = require('../../util/decoratorValidator');
-const globalEnum = require('../../util/globalEnum');
+const DatabaseProvider = require('../../../providers/database');
+const { verifyIfExistsInTable } = require('../../../providers/database/utils');
+const decoratorValidator = require('../../../util/decoratorValidator');
+const globalEnum = require('../../../util/globalEnum');
 
 class Handler {
   constructor(){

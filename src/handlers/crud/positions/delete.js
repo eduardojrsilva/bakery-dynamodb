@@ -1,4 +1,4 @@
-const DatabaseProvider = require('../../providers/database');
+const DatabaseProvider = require('../../../providers/database');
 
 class Handler {
   constructor(){
