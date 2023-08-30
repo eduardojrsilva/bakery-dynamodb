@@ -65,14 +65,30 @@ class Handler {
       }), {});
 
       products.map(({ productId, amount }) => {
-        const { name, price, stock } = productDataById[productId];
+        const productData = productDataById[productId];
 
-        if (amount > stock) {
+        if (!productData || amount > productData.stock) {
           return this.handlerError({
             statusCode: 400,
             message: 'Our stock does not meet one of the orders'
           });
         }
+
+        const { name, price, stock } = productData;
+
+        const newStock = stock - amount;
+            
+        transactionData.push({
+          operation: 'Update',
+          Key: {
+            pk: 'UNIT',
+            sk: `UNIT#${unitId}#PRODUCT#${productId}`,
+          },
+          UpdateExpression: 'SET stock = :newStock',
+          ExpressionAttributeValues: {
+            ':newStock': newStock,
+          },
+        });
 
         const saleProduct = {
           pk: 'SALE',
