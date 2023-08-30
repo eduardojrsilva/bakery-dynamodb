@@ -51,7 +51,7 @@ class Handler {
 
       const saleId = generateUniqueId();
       
-      const totalPrice = 0;
+      let totalPrice = 0;
       const transactionData = [];
 
       const unitProducts = await this.database.findAll({
