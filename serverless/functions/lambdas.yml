@@ -323,7 +323,7 @@ supplierEquipment-findAll:
   handler: src/handlers/index.supplierEquipmentFindAll
   events:
     - httpApi:
-        path: /supplier-equipment
+        path: /supplier-equipment/{equipmentId}
         method: get
 
 # UNIT EQUIPMENT
