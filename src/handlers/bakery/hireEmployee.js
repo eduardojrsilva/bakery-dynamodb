@@ -63,7 +63,7 @@ class Handler {
 
       transactionData.push({ operation: 'Put', Item: employee });
 
-      positions.map(async ({ positionId, salary }) => {
+      positions.map(({ positionId, salary }) => {
         const position = {
           pk: 'POSITION',
           sk: `POSITION#${positionId}#EMPLOYEE#${employeeId}`,

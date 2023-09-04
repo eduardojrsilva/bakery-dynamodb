@@ -81,7 +81,7 @@ class Handler {
           return acc + productDataById[productId].price * amount;
         }, 0);
 
-        products.forEach(({ productId, resalePrice, amount }) => {
+        products.forEach(async ({ productId, resalePrice, amount }) => {
           const productKey = {
             pk: 'UNIT',
             sk: `UNIT#${unitId}#PRODUCT#${productId}`,
@@ -141,7 +141,7 @@ class Handler {
           return acc + equipmentDataById[equipmentId].price * amount;
         }, 0);
 
-        equipments.forEach(({ equipmentId, amount }) => {
+        equipments.forEach(async ({ equipmentId, amount }) => {
           const equipmentKey = {
             pk: 'UNIT',
             sk: `UNIT#${unitId}#EQUIPMENT#${equipmentId}`,

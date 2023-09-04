@@ -135,6 +135,7 @@ class DatabaseProvider {
     const TransactItems = transactionsItems.map(({ operation, ...attributes }) => {
       return {
         [operation]: {
+          TableName: 'Bakery',
           ...attributes,
         }
       }
