@@ -40,22 +40,22 @@ class DatabaseProvider {
     return item;
   }
 
-  async findAll({ pk, sk, indexName, maxResults, descending }) {
+  async findAll({ pk, sk, indexName, maxResults, descending, pkName='pk', skName='sk' }) {
     const { skConditionExpression, skAttributeValues } = sk ? {
-      skConditionExpression: ` and begins_with(sk, :sk)`,
+      skConditionExpression: ` and begins_with(${skName}, :sk)`,
       skAttributeValues: { ':sk': sk },
     } : {
       skConditionExpression: '',
       skAttributeValues: {},
     };
 
-    const KeyConditionExpression = `pk = :pk${skConditionExpression}`;
+    const KeyConditionExpression = `${pkName} = :pk${skConditionExpression}`;
 
     const ExpressionAttributeValues = {
       ':pk': pk,
       ...skAttributeValues,
     };
-    
+
     const params = {
       KeyConditionExpression,
       ExpressionAttributeValues,
