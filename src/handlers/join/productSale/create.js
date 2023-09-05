@@ -15,21 +15,8 @@ class Handler {
       saleId: Joi.string().required(),
       name: Joi.string().required(),
       unitSalePrice: Joi.number().required(),
-      amount: Joi.number().integer().required(),
+      stock: Joi.number().integer().required(),
     });
-  }
-
-  transformResponse(response) {
-    const { pk, sk, product_sale_pk, product_sale_sk, ...data } = response;
-
-    const id = sk.split('#')[3];
-
-    const transformed = {
-      id,
-      ...data,
-    };
-
-    return transformed;
   }
 
   handlerSuccess(data) {
@@ -69,7 +56,7 @@ class Handler {
 
       const productSale = await this.database.create(item);
 
-      return this.handlerSuccess(this.transformResponse(productSale));
+      return this.handlerSuccess(productSale);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

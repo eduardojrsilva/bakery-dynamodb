@@ -26,11 +26,14 @@ class Handler {
 
   async main(event) {
     try {
-      const { positionId } = event.pathParameters;
+      const { id } = event.pathParameters;
 
       const employeePosition = await this.database.findAll({
-        pk: 'POSITION',
-        sk: `POSITION#${positionId}#EMPLOYEE`
+        indexName: 'GSI3',
+        pkName: 'gsi3_pk',
+        skName: 'gsi3_sk',
+        pk: `EMPLOYEE#${id}`,
+        sk: `POSITION`
       });
 
       return this.handlerSuccess(employeePosition);
