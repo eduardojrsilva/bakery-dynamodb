@@ -54,6 +54,8 @@ class Handler {
       let totalPrice = 0;
       const transactionData = [];
 
+      let errorData;
+
       const unitProducts = await this.database.findAll({
         pk: 'UNIT',
         sk: `UNIT#${unitId}#PRODUCT`
@@ -68,10 +70,12 @@ class Handler {
         const productData = productDataById[productId];
 
         if (!productData || amount > productData.stock) {
-          return this.handlerError({
+          errorData = {
             statusCode: 400,
             message: 'Our stock does not meet one of the orders'
-          });
+          };
+
+          return;
         }
 
         const { name, price, stock } = productData;
@@ -106,6 +110,8 @@ class Handler {
   
         transactionData.push({ operation: 'Put', Item: saleProduct });
       });
+
+      if (errorData) return this.handlerError(errorData);
       
       const sale = {
         pk: 'SALE',
