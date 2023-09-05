@@ -31,6 +31,7 @@ class Handler {
       const topSelling = await this.database.findAll({
         pk: `UNIT#${unitId}`,
         sk: `SELLING`,
+        indexName: 'GSI6',
         pkName: 'gsi6_pk',
         skName: 'gsi6_sk',
         maxResults: 5,
