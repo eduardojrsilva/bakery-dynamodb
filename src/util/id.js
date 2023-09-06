@@ -1,9 +1,7 @@
-const { v4 } = require('uuid');
+const KSUID = require('ksuid');
 
 function generateUniqueId() {
-  const id = v4();
-
-  return id;
+  return KSUID.randomSync().string;
 }
 
 module.exports = generateUniqueId;

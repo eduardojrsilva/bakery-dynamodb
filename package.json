@@ -8,6 +8,7 @@
   "dependencies": {
     "aws-sdk": "^2.1220.0",
     "joi": "^17.9.2",
+    "ksuid": "^3.0.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {}
