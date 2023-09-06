@@ -43,14 +43,27 @@ class Handler {
 
       const { unitId, productId, ...params } = data;
 
+      const product = await this.database.findById({
+        pk: 'PRODUCT',
+        sk: productId,
+      });
+
+      if (!product) this.handlerError({ statusCode: 500 });
+
+      const { name } = product;
+
       const item = {
         unitId,
         productId,
         pk: 'UNIT',
         sk: `UNIT#${unitId}#PRODUCT#${productId}`,
         ...params,
+        selling: 0,
+        name,
         gsi1_pk: `PRODUCT#${productId}`,
         gsi1_sk: `UNIT#${unitId}`,
+        gsi6_pk: `UNIT#${unitId}`,
+        gsi6_sk:  `SELLING#0`
       }
 
       const productUnit = await this.database.create(item);

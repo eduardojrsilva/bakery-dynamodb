@@ -24,9 +24,10 @@ class Handler {
     });
   };
 
-  handlerSuccess() {
+  handlerSuccess(data) {
     const response = {
       statusCode: 200,
+      body: JSON.stringify(data)
     }
 
     return response;
@@ -94,7 +95,10 @@ class Handler {
 
       await this.database.transact(transactionData);
 
-      return this.handlerSuccess();
+      return this.handlerSuccess({
+        id: employeeId,
+        name: employeeName,
+      });
     } catch (error) {
       console.log('Erro *** ', error.stack);
 
