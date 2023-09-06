@@ -77,7 +77,7 @@ class Handler {
           [productId]: { name, price, stock },
         }), {});
 
-        productsTotalPrice = products.reduce((acc, { productId, amount }, indexA) => {
+        productsTotalPrice = products.reduce((acc, { productId, amount }) => {
           return acc + productDataById[productId].price * amount;
         }, 0);
 
