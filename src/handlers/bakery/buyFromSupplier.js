@@ -77,11 +77,14 @@ class Handler {
           [productId]: { name, price, stock },
         }), {});
 
+
         productsTotalPrice = products.reduce((acc, { productId, amount }) => {
           return acc + productDataById[productId].price * amount;
         }, 0);
 
-        products.forEach(async ({ productId, resalePrice, amount }) => {
+
+        for (const { productId, resalePrice, amount } of products) {
+
           const productKey = {
             pk: 'UNIT',
             sk: `UNIT#${unitId}#PRODUCT#${productId}`,
@@ -102,6 +105,7 @@ class Handler {
                 ':newStock': newStock,
               },
             });
+
           } else {
             const { name } = productDataById[productId];
 
@@ -118,7 +122,7 @@ class Handler {
 
             transactionData.push({ operation: 'Put', Item: unitProduct });
           }
-        });
+        };
       }
 
       if (equipments) {
@@ -141,7 +145,7 @@ class Handler {
           return acc + equipmentDataById[equipmentId].price * amount;
         }, 0);
 
-        equipments.forEach(async ({ equipmentId, amount }) => {
+          for (const { equipmentId, amount } of equipments) {
           const equipmentKey = {
             pk: 'UNIT',
             sk: `UNIT#${unitId}#EQUIPMENT#${equipmentId}`,
@@ -177,7 +181,7 @@ class Handler {
 
             transactionData.push({ operation: 'Put', Item: unitEquipment });
           }
-        });
+        };
       }
 
       await this.database.transact(transactionData);
