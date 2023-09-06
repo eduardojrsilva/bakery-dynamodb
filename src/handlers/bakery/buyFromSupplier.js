@@ -67,6 +67,8 @@ class Handler {
           sk: `SUPPLIER#${supplierId}#PRODUCT`
         });
 
+        console.log('supplier products: ', supplierProducts)
+
         const nonExistentProduct = supplierProducts.some(({ productId: id }) => !products.some(({ productId }) => productId === id));
 
         if (nonExistentProduct || !supplierProducts.length)
@@ -77,9 +79,16 @@ class Handler {
           [productId]: { name, price, stock },
         }), {});
 
-        productsTotalPrice = products.reduce((acc, { productId, amount }) => {
+        console.log('prodcuts by id: ', productDataById)
+
+        productsTotalPrice = products.reduce((acc, { productId, amount }, indexA) => {
+          console.log(`dentro do reduce (volta ${indexA}): \nacc: ${acc} \nproductId: ${productId} \namount: ${amount}`)
           return acc + productDataById[productId].price * amount;
         }, 0);
+
+        console.log('total price: ', productsTotalPrice)
+
+        console.log('products: ', products)
 
         products.forEach(async ({ productId, resalePrice, amount }) => {
           const productKey = {
@@ -88,6 +97,8 @@ class Handler {
           }
 
           const alreadyExistentProduct = await this.database.findById(productKey);
+
+          console.log('already existent product', alreadyExistentProduct)
           
           if (alreadyExistentProduct) {
             const { stock } = alreadyExistentProduct;
@@ -103,7 +114,10 @@ class Handler {
               },
             });
           } else {
-            const { name } = productDataById[productId];
+
+            console.log('AQUI')
+            // const { name } = productDataById[productId];
+            const name =  'teste';
 
             const unitProduct = {
               ...productKey,
@@ -179,6 +193,8 @@ class Handler {
           }
         });
       }
+
+      console.log('transaction data: ', transactionData)
 
       await this.database.transact(transactionData);
 

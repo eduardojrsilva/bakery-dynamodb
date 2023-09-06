@@ -34,11 +34,16 @@ class Handler {
         indexName: 'GSI6',
         pkName: 'gsi6_pk',
         skName: 'gsi6_sk',
-        maxResults: 5,
-        descending: true,
+        maxResults: 3,
+        ascending: false,
       });
 
-      return this.handlerSuccess(topSelling);
+      const filteredTopSelling =topSelling.filter(({ selling }) => selling > 0)
+        .map(({ productId, name, selling }) => ({
+          productId, name, selling 
+        }))
+
+      return this.handlerSuccess(filteredTopSelling);
     } catch (error) {
       console.log('Erro *** ', error.stack);
 

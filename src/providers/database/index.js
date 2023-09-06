@@ -40,7 +40,7 @@ class DatabaseProvider {
     return item;
   }
 
-  async findAll({ pk, sk, indexName, maxResults, descending, pkName='pk', skName='sk' }) {
+  async findAll({ pk, sk, indexName, maxResults, ascending, pkName='pk', skName='sk' }) {
     const { skConditionExpression, skAttributeValues } = sk ? {
       skConditionExpression: ` and begins_with(${skName}, :sk)`,
       skAttributeValues: { ':sk': sk },
@@ -61,7 +61,7 @@ class DatabaseProvider {
       ExpressionAttributeValues,
       IndexName: indexName,
       Limit: maxResults,
-      ScanIndexForward: descending,
+      ScanIndexForward: ascending,
     };
 
     const { Items } = await this.dynamoDB.query(params).promise();

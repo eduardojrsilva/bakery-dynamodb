@@ -61,7 +61,7 @@ class Handler {
         sk: `UNIT#${unitId}#PRODUCT`
       });
 
-      const productDataById = unitProducts.reduce((acc, { productId, name, price, stock }) => ({
+      const productDataById = unitProducts.reduce((acc, { productId, name, price, stock, selling }) => ({
         ...acc,
         [productId]: { name, price, stock },
       }), {});
@@ -78,9 +78,11 @@ class Handler {
           return;
         }
 
-        const { name, price, stock } = productData;
+        const { name, price, stock, selling } = productData;
 
         const newStock = stock - amount;
+        const newSelling = (selling || 0) + amount;
+        const newGsi6sk = `SELLING#${newSelling}`;
             
         transactionData.push({
           operation: 'Update',
@@ -88,9 +90,11 @@ class Handler {
             pk: 'UNIT',
             sk: `UNIT#${unitId}#PRODUCT#${productId}`,
           },
-          UpdateExpression: 'SET stock = :newStock',
+          UpdateExpression: 'SET stock = :newStock, selling = :newSelling, gsi6_sk = :newGsi6sk',
           ExpressionAttributeValues: {
             ':newStock': newStock,
+            ':newSelling': newSelling,
+            ':newGsi6sk': newGsi6sk,
           },
         });
 
