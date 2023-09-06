@@ -42,12 +42,23 @@ class Handler {
       
       const { supplierId, equipmentId, ...params } = data;
 
+      const equipment = await this.database.findById({
+        pk: 'EQUIPMENT',
+        sk: equipmentId,
+      });
+
+      if (!equipment) this.handlerError({ statusCode: 500 });
+
+      const { name, price } = equipment;
+
       const item = {
         supplierId,
         equipmentId,
         pk: 'SUPPLIER',
         sk: `SUPPLIER#${supplierId}#EQUIPMENT#${equipmentId}`,
         ...params,
+        name,
+        price,
         gsi2_pk: `EQUIPMENT#${equipmentId}`,
         gsi2_sk: `SUPPLIER#${supplierId}`,
       }
