@@ -1,11 +1,13 @@
 const Joi = require('joi');
+const { HttpInjector } = require('../../../injectors');
 
 const DatabaseProvider = require('../../../providers/database');
 const decoratorValidator = require('../../../util/decoratorValidator');
 const globalEnum = require('../../../util/globalEnum');
 
-class Handler {
+class Handler extends HttpInjector {
   constructor(){
+    super();
     this.database = new DatabaseProvider();
   }
 
@@ -14,25 +16,6 @@ class Handler {
       id: Joi.string().required(),
       totalPrice: Joi.number().optional(),
     });
-  }
-
-  handlerSuccess(data) {
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify(data)
-    }
-
-    return response;
-  }
-
-  handlerError(data) {
-    const response = {
-      statusCode: data.statusCode || 500,
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: "Couldn't update item!"})
-    }
-
-    return response;
   }
 
   async main(event) {

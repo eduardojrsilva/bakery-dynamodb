@@ -1,12 +1,14 @@
 const Joi = require('joi');
+const { HttpInjector } = require('../../injectors');
 
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
 const generateUniqueId = require('../../util/id');
 
-class Handler {
+class Handler extends HttpInjector {
   constructor(){
+    super();
     this.database = new DatabaseProvider();
   }
 
@@ -22,25 +24,6 @@ class Handler {
         })
       ),
     });
-  };
-
-  handlerSuccess(data) {
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify(data)
-    }
-
-    return response;
-  }
-
-  handlerError(error) {
-    const response = {
-      statusCode: error.statusCode || 500,
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: error.message || "Error when finish sale"})
-    }
-
-    return response;
   }
 
   async main(event) {

@@ -5,9 +5,11 @@ const decoratorValidator = require('../../../util/decoratorValidator');
 const globalEnum = require('../../../util/globalEnum');
 
 const { verifyIfExistsInTable } = require('../../../providers/database/utils');
+const { HttpInjector } = require('../../../injectors');
 
-class Handler {
+class Handler extends HttpInjector {
   constructor(){
+    super();
     this.database = new DatabaseProvider('UnitSupplier');
   }
 
@@ -16,25 +18,6 @@ class Handler {
       unitId: Joi.string().required(),
       supplierId: Joi.string().required(),
     });
-  }
-
-  handlerSuccess(data) {
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify(data)
-    }
-
-    return response;
-  }
-
-  handlerError(error) {
-    const response = {
-      statusCode: error.statusCode || 500,
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: error.message || "Couldn't create item!"})
-    }
-
-    return response;
   }
 
   async main(event) {

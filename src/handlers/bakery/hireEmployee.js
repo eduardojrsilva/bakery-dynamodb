@@ -5,9 +5,11 @@ const generateUniqueId = require('../../util/id');
 const DatabaseProvider = require('../../providers/database');
 const decoratorValidator = require('../../util/decoratorValidator');
 const globalEnum = require('../../util/globalEnum');
+const { HttpInjector } = require('../../injectors');
 
-class Handler {
+class Handler extends HttpInjector {
   constructor(){
+    super();
     this.database = new DatabaseProvider();
   }
 
@@ -23,25 +25,6 @@ class Handler {
       employeeName: Joi.string(),
     });
   };
-
-  handlerSuccess(data) {
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify(data)
-    }
-
-    return response;
-  }
-
-  handlerError(error) {
-    const response = {
-      statusCode: error.statusCode || 500,
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({error: error.message || "Error when hire employee!"})
-    }
-
-    return response;
-  }
 
   async main(event) {
     try {
